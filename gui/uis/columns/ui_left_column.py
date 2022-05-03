@@ -10,7 +10,6 @@
 
 from qt_core import *
 
-
 class Ui_LeftColumn(object):
     def setupUi(self, LeftColumn):
         if not LeftColumn.objectName():
