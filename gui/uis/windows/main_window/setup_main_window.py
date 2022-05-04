@@ -2,6 +2,7 @@ from gui.widgets.py_table_widget.py_table_widget import PyTableWidget
 from . functions_main_window import *
 import sys
 import os
+import json
 from qt_core import *
 from gui.core.json_settings import Settings
 from gui.core.json_themes import Themes
@@ -9,6 +10,8 @@ from gui.widgets import *
 
 from . ui_main import *
 from . functions_main_window import *
+
+from data_management import *
 
 #What should the main window contain.
 class SetupMainWindow:
@@ -30,7 +33,7 @@ class SetupMainWindow:
         {"btn_icon" : "icon_search.svg", "btn_id" : "btn_search", "btn_tooltip" : "Search", "is_active" : False},
         {"btn_icon" : "icon_settings.svg", "btn_id" : "btn_top_settings", "btn_tooltip" : "Top settings", "is_active" : False}
     ]
-
+    
     #This gets called on button click, returns the action that the button is designed for
     def setup_btns(self):
         if self.ui.title_bar.sender() != None:
@@ -89,19 +92,42 @@ class SetupMainWindow:
         self.ui.load_pages.logo_layout.addWidget(self.logo, Qt.AlignCenter, Qt.AlignCenter)
         
         #mainpage: Add API key manager
-        self.line_edit = QLineEdit()
-        self.button = QPushButton("send", self)
+        self.line_API = QLineEdit()
+        self.send_API = QPushButton("send")
         self.text = QLabel("connected")
-        #Save the API key entered by user
+        #Save the API key entered by user and boot portfolio!
         def print_API():
-            API_key = self.line_edit.text()
+            API_key = self.line_API.text()
             print(API_key)
             self.ui.load_pages.API_valid_layout.addWidget(self.text)
+            #Booting portfolio
+            self.portfolio = portfolio(self, API_key)
+            #Load everything in booted portfolio
+            with open("stock.json") as f:
+                self.portfolio.stock = json.load(f)
+            with open("crypto.json") as f:
+                self.portfolio.crypto = json.load(f)
         #Use the function on button click
-        self.button.clicked.connect(print_API)
+        self.send_API.clicked.connect(print_API)
         #Display both the text field and the send button
-        self.ui.load_pages.API_key_layout.addWidget(self.line_edit, Qt.AlignCenter, Qt.AlignCenter)
-        self.ui.load_pages.send_layout.addWidget(self.button, Qt.AlignCenter, Qt.AlignCenter)
+        self.ui.load_pages.API_key_layout.addWidget(self.line_API)
+        self.ui.load_pages.send_layout.addWidget(self.send_API)
+
+        #mainpage2: choose any ticker
+        self.line_ticker = QLineEdit()
+        self.ask_ticker = QPushButton("ask")
+        #Load stock and crypto tickers
+        
+        #Ask for the ticker entered by the user
+        def ask_ticker():
+            ticker = self.line_ticker.text()
+            if ticker in self.portfolio.stock or ticker in self.portfolio.crypto:
+                print("API CALL")
+            else:
+                print("Wrong ticker")
+        self.ask_ticker.clicked.connect(ask_ticker)
+        self.ui.load_pages.ticker_layout.addWidget(self.line_ticker)
+        self.ui.load_pages.ask_layout.addWidget(self.ask_ticker)
 
     #Resize the grips when window is resized
     def resize_grips(self):

@@ -1,106 +1,57 @@
-# ///////////////////////////////////////////////////////////////
-#
-# BY: WANDERSON M.PIMENTA
-# PROJECT MADE WITH: Qt Designer and PySide6
-# V: 1.0.0
-#
-# This project can be used freely for all uses, as long as they maintain the
-# respective credits only in the Python scripts, any information in the visual
-# interface (GUI) can be modified without any implication.
-#
-# There are limitations on Qt licenses if you want to use your products
-# commercially, I recommend reading them on the official website:
-# https://doc.qt.io/qtforpython/licenses.html
-#
-# ///////////////////////////////////////////////////////////////
-
-# IMPORT PACKAGES AND MODULES
-# ///////////////////////////////////////////////////////////////
 from gui.uis.windows.main_window.functions_main_window import *
+from data_management import *
 import sys
 import os
 
-# IMPORT QT CORE
-# ///////////////////////////////////////////////////////////////
 from qt_core import *
 
-# IMPORT SETTINGS
-# ///////////////////////////////////////////////////////////////
 from gui.core.json_settings import Settings
 
-# IMPORT PY ONE DARK WINDOWS
-# ///////////////////////////////////////////////////////////////
-# MAIN WINDOW
 from gui.uis.windows.main_window import *
 
-# IMPORT PY ONE DARK WIDGETS
-# ///////////////////////////////////////////////////////////////
 from gui.widgets import *
 
-# ADJUST QT FONT DPI FOR HIGHT SCALE AN 4K MONITOR
-# ///////////////////////////////////////////////////////////////
-os.environ["QT_FONT_DPI"] = "96"
-# IF IS 4K MONITOR ENABLE 'os.environ["QT_SCALE_FACTOR"] = "2"'
+from data_management import *
 
-# MAIN WINDOW
-# ///////////////////////////////////////////////////////////////
+os.environ["QT_FONT_DPI"] = "96"
+
+#The main window
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
-        # SETUP MAIN WINDOw
-        # Load widgets from "gui\uis\main_window\ui_main.py"
-        # ///////////////////////////////////////////////////////////////
         self.ui = UI_MainWindow()
         self.ui.setup_ui(self)
-
-        # LOAD SETTINGS
-        # ///////////////////////////////////////////////////////////////
         settings = Settings()
         self.settings = settings.items
-
-        # SETUP MAIN WINDOW
-        # ///////////////////////////////////////////////////////////////
-        self.hide_grips = True # Show/Hide resize grips
+        self.hide_grips = True
         SetupMainWindow.setup_gui(self)
 
-        # SHOW MAIN WINDOW
-        # ///////////////////////////////////////////////////////////////
         self.show()
 
-    # LEFT MENU BTN IS CLICKED
-    # Run function when btn is clicked
-    # Check funtion by object name / btn_id
-    # ///////////////////////////////////////////////////////////////
+    #Main window buttons clicked
     def btn_clicked(self):
-        # GET BT CLICKED
-        btn = SetupMainWindow.setup_btns(self)
-
-        # LEFT MENU
-        # ///////////////////////////////////////////////////////////////
-        
-        # OPEN HOME PAGE
+        btn = SetupMainWindow.setup_btns(self)       
+        #Open home page
         if btn.objectName() == "btn_home":
             #Select menu
             self.ui.left_menu.select_only_one(btn.objectName())
             #Load page
             MainFunctions.set_page(self, self.ui.load_pages.page_1)
-        # OPEN MARKET PAGE
+        #Open market page
         if btn.objectName() == "btn_market":
             #Select menu
             self.ui.left_menu.select_only_one(btn.objectName())
             #Load page
             MainFunctions.set_page(self, self.ui.load_pages.page_2)
-        # OPEN PORTFOLIO PAGE
+        #Open portfolio page
         if btn.objectName() == "btn_portfolio":
             #Select menu
             self.ui.left_menu.select_only_one(btn.objectName())
             #Load page
             MainFunctions.set_page(self, self.ui.load_pages.page_3)
         
-        # GET TOP SETTINGS
         top_btn_settings = MainFunctions.get_title_bar_btn(self, "btn_top_settings")
-        # OPEN ABOUT MENU
+        #Open about menu
         if btn.objectName() == "btn_about" or btn.objectName() == "btn_close_left_column":
             #Disable selection on title bar
             top_btn_settings.set_active(False)
@@ -122,7 +73,7 @@ class MainWindow(QMainWindow):
                 menu = self.ui.left_column.menus.menu_1,
                 title = "About",
                 icon_path = Functions.set_svg_icon("icon_info.svg"))
-        # OPEN SETTINGS MENU
+        #Open settings menu
         if btn.objectName() == "btn_settings" or btn.objectName() == "btn_close_left_column":
             #Disable selection on title bar
             top_btn_settings.set_active(False)
@@ -144,10 +95,6 @@ class MainWindow(QMainWindow):
                 menu = self.ui.left_column.menus.menu_2,
                 title = "Settings",
                 icon_path = Functions.set_svg_icon("icon_settings.svg"))
-        
-        
-        # TITLE BAR MENU
-        # ///////////////////////////////////////////////////////////////
         
         # SETTINGS TITLE BAR
         if btn.objectName() == "btn_top_settings":
@@ -174,10 +121,7 @@ class MainWindow(QMainWindow):
         # DEBUG
         print(f"Button {btn.objectName()}, clicked!")
 
-    # LEFT MENU BTN IS RELEASED
-    # Run function when btn is released
-    # Check funtion by object name / btn_id
-    # ///////////////////////////////////////////////////////////////
+    #Main window buttons released
     def btn_released(self):
         # GET BT CLICKED
         btn = SetupMainWindow.setup_btns(self)
@@ -185,28 +129,19 @@ class MainWindow(QMainWindow):
         # DEBUG
         print(f"Button {btn.objectName()}, released!")
 
-    # RESIZE EVENT
-    # ///////////////////////////////////////////////////////////////
+    #Resize main window
     def resizeEvent(self, event):
         SetupMainWindow.resize_grips(self)
 
-    # MOUSE CLICK EVENTS
-    # ///////////////////////////////////////////////////////////////
+    #Mouse click on window
     def mousePressEvent(self, event):
         # SET DRAG POS WINDOW
         self.dragPos = event.globalPos()
 
-
-# SETTINGS WHEN TO START
-# Set the initial class and also additional parameters of the "QApplication" class
-# ///////////////////////////////////////////////////////////////
+#Run the program
 if __name__ == "__main__":
-    # APPLICATION
-    # ///////////////////////////////////////////////////////////////
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
 
-    # EXEC APP
-    # ///////////////////////////////////////////////////////////////
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
