@@ -121,7 +121,7 @@ class MainWindow(QMainWindow):
                 title = "Settings",
                 icon_path = Functions.set_svg_icon("icon_settings.svg"))
         
-        # SETTINGS TITLE BAR
+        #Open right settings menu
         if btn.objectName() == "btn_top_settings":
             # Toogle Active
             if not MainFunctions.right_column_is_visible(self):
@@ -148,7 +148,6 @@ class MainWindow(QMainWindow):
 
     #Main window buttons released
     def btn_released(self):
-        # GET BT CLICKED
         btn = SetupMainWindow.setup_btns(self)
 
         # DEBUG

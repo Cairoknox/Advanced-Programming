@@ -98,16 +98,20 @@ class SetupMainWindow:
         #Save the API key entered by user
         def print_API():
             API_key = self.line_API.text()
+            if not API_key == "":
+                self.key = API_key
+                print("API key loaded.")
+            else:
+                self.text.text("error")
+                print("API key cannot be empty")
             self.ui.load_pages.API_valid_layout.addWidget(self.text)
-            self.key = API_key
-            print("API key loaded.")
         #Use the function on button click
         self.send_API.clicked.connect(print_API)
         #Display both the text field and the send button
         self.ui.load_pages.API_key_layout.addWidget(self.line_API)
         self.ui.load_pages.send_layout.addWidget(self.send_API)
 
-        #mainpage2: choose any ticker
+        #mainpage2: Choose any ticker
         self.line_ticker = QLineEdit()
         self.ask_ticker = QPushButton("ask")
         self.add_ticker = QPushButton("add")
@@ -133,6 +137,17 @@ class SetupMainWindow:
         self.ui.load_pages.ticker_layout.addWidget(self.line_ticker)
         self.ui.load_pages.ask_layout.addWidget(self.ask_ticker)
         self.ui.load_pages.add_layout.addWidget(self.add_ticker)
+
+        #mainpage3: Create portfolio
+        self.construct = QPushButton("construct")
+        self.text_construct = QLabel("constructed")
+        #Run data_get on button push
+        def construct():
+            self.pfdta = construct_pf(self)
+            self.ui.load_pages.portfolio_layout.addWidget(self.text_construct)
+        self.construct.clicked.connect(construct)
+
+        self.ui.load_pages.portfolio_layout.addWidget(self.construct)
 
     #Resize the grips when window is resized
     def resize_grips(self):

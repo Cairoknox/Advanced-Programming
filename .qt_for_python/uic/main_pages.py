@@ -44,9 +44,9 @@ class Ui_MainPages(object):
         self.page_1.setFont(font1)
         self.page_1.setStyleSheet(u"")
         self.page_1_layout = QVBoxLayout(self.page_1)
-        self.page_1_layout.setSpacing(5)
+        self.page_1_layout.setSpacing(0)
         self.page_1_layout.setObjectName(u"page_1_layout")
-        self.page_1_layout.setContentsMargins(5, 5, 5, 5)
+        self.page_1_layout.setContentsMargins(0, 0, 0, 0)
         self.main_frame = QFrame(self.page_1)
         self.main_frame.setObjectName(u"main_frame")
         self.main_frame.setFont(font1)
@@ -54,7 +54,9 @@ class Ui_MainPages(object):
         self.main_frame.setFrameShape(QFrame.NoFrame)
         self.main_frame.setFrameShadow(QFrame.Raised)
         self.gridLayout = QGridLayout(self.main_frame)
+        self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.logo_frame = QFrame(self.main_frame)
         self.logo_frame.setObjectName(u"logo_frame")
         self.logo_frame.setFrameShape(QFrame.NoFrame)
@@ -164,13 +166,15 @@ class Ui_MainPages(object):
         self.page_2_layout.setSpacing(0)
         self.page_2_layout.setObjectName(u"page_2_layout")
         self.page_2_layout.setContentsMargins(0, 0, 0, 0)
-        self.frame = QFrame(self.page_2)
-        self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Raised)
-        self.gridLayout_2 = QGridLayout(self.frame)
+        self.main_frame_2 = QFrame(self.page_2)
+        self.main_frame_2.setObjectName(u"main_frame_2")
+        self.main_frame_2.setFrameShape(QFrame.NoFrame)
+        self.main_frame_2.setFrameShadow(QFrame.Raised)
+        self.gridLayout_2 = QGridLayout(self.main_frame_2)
+        self.gridLayout_2.setSpacing(0)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.plot_frame = QFrame(self.frame)
+        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.plot_frame = QFrame(self.main_frame_2)
         self.plot_frame.setObjectName(u"plot_frame")
         self.plot_frame.setFrameShape(QFrame.NoFrame)
         self.plot_frame.setFrameShadow(QFrame.Raised)
@@ -181,7 +185,7 @@ class Ui_MainPages(object):
 
         self.gridLayout_2.addWidget(self.plot_frame, 0, 2, 3, 2)
 
-        self.ticker_frame = QFrame(self.frame)
+        self.ticker_frame = QFrame(self.main_frame_2)
         self.ticker_frame.setObjectName(u"ticker_frame")
         self.ticker_frame.setFrameShape(QFrame.NoFrame)
         self.ticker_frame.setFrameShadow(QFrame.Raised)
@@ -192,7 +196,7 @@ class Ui_MainPages(object):
 
         self.gridLayout_2.addWidget(self.ticker_frame, 2, 1, 1, 1)
 
-        self.selection_frame = QFrame(self.frame)
+        self.selection_frame = QFrame(self.main_frame_2)
         self.selection_frame.setObjectName(u"selection_frame")
         self.selection_frame.setFrameShape(QFrame.NoFrame)
         self.selection_frame.setFrameShadow(QFrame.Raised)
@@ -203,16 +207,18 @@ class Ui_MainPages(object):
 
         self.gridLayout_2.addWidget(self.selection_frame, 0, 1, 2, 1)
 
-        self.ask_frame = QFrame(self.frame)
+        self.ask_frame = QFrame(self.main_frame_2)
         self.ask_frame.setObjectName(u"ask_frame")
-        self.ask_frame.setFrameShape(QFrame.StyledPanel)
+        self.ask_frame.setFrameShape(QFrame.NoFrame)
         self.ask_frame.setFrameShadow(QFrame.Raised)
         self.ask_layout = QVBoxLayout(self.ask_frame)
+        self.ask_layout.setSpacing(0)
         self.ask_layout.setObjectName(u"ask_layout")
+        self.ask_layout.setContentsMargins(0, 0, 0, 0)
 
         self.gridLayout_2.addWidget(self.ask_frame, 3, 1, 1, 1)
 
-        self.frame_2 = QFrame(self.frame)
+        self.frame_2 = QFrame(self.main_frame_2)
         self.frame_2.setObjectName(u"frame_2")
         self.frame_2.setFrameShape(QFrame.NoFrame)
         self.frame_2.setFrameShadow(QFrame.Raised)
@@ -224,16 +230,60 @@ class Ui_MainPages(object):
         self.gridLayout_2.addWidget(self.frame_2, 3, 2, 1, 1)
 
 
-        self.page_2_layout.addWidget(self.frame)
+        self.page_2_layout.addWidget(self.main_frame_2)
 
         self.pages.addWidget(self.page_2)
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
-        self.page_3.setStyleSheet(u"QFrame {\n"
-"	font-size: 16pt;\n"
-"}")
+        self.page_3.setStyleSheet(u"font-size: 14pt;background: white;")
         self.page_3_layout = QVBoxLayout(self.page_3)
+        self.page_3_layout.setSpacing(0)
         self.page_3_layout.setObjectName(u"page_3_layout")
+        self.page_3_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_frame_3 = QFrame(self.page_3)
+        self.main_frame_3.setObjectName(u"main_frame_3")
+        self.main_frame_3.setFrameShape(QFrame.NoFrame)
+        self.main_frame_3.setFrameShadow(QFrame.Raised)
+        self.gridLayout_3 = QGridLayout(self.main_frame_3)
+        self.gridLayout_3.setSpacing(0)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.portfolio_frame = QFrame(self.main_frame_3)
+        self.portfolio_frame.setObjectName(u"portfolio_frame")
+        self.portfolio_frame.setFrameShape(QFrame.NoFrame)
+        self.portfolio_frame.setFrameShadow(QFrame.Raised)
+        self.portfolio_layout = QVBoxLayout(self.portfolio_frame)
+        self.portfolio_layout.setSpacing(0)
+        self.portfolio_layout.setObjectName(u"portfolio_layout")
+        self.portfolio_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.gridLayout_3.addWidget(self.portfolio_frame, 1, 0, 2, 1)
+
+        self.optimize_frame = QFrame(self.main_frame_3)
+        self.optimize_frame.setObjectName(u"optimize_frame")
+        self.optimize_frame.setFrameShape(QFrame.NoFrame)
+        self.optimize_frame.setFrameShadow(QFrame.Raised)
+        self.optimize_layout = QVBoxLayout(self.optimize_frame)
+        self.optimize_layout.setSpacing(0)
+        self.optimize_layout.setObjectName(u"optimize_layout")
+        self.optimize_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.gridLayout_3.addWidget(self.optimize_frame, 0, 0, 1, 1)
+
+        self.markowitz_frame = QFrame(self.main_frame_3)
+        self.markowitz_frame.setObjectName(u"markowitz_frame")
+        self.markowitz_frame.setFrameShape(QFrame.NoFrame)
+        self.markowitz_frame.setFrameShadow(QFrame.Raised)
+        self.markowitz_layout = QVBoxLayout(self.markowitz_frame)
+        self.markowitz_layout.setSpacing(0)
+        self.markowitz_layout.setObjectName(u"markowitz_layout")
+        self.markowitz_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.gridLayout_3.addWidget(self.markowitz_frame, 0, 1, 3, 2)
+
+
+        self.page_3_layout.addWidget(self.main_frame_3)
+
         self.pages.addWidget(self.page_3)
 
         self.main_pages_layout.addWidget(self.pages)
@@ -241,7 +291,7 @@ class Ui_MainPages(object):
 
         self.retranslateUi(MainPages)
 
-        self.pages.setCurrentIndex(1)
+        self.pages.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainPages)

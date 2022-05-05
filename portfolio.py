@@ -43,6 +43,8 @@ data_add(name)
     Tries to call new data iif it is not already in storage.
 data_remove(name)
     Tries to remove a stock or a crypto from the storage to free up space.
+data_show(name)
+    Plot data that has been asked or added to the portfolio or data.
 data_get(names, horizon, data = pd.DataFrame())
     Construct a portfolio for given stock and cryptos, and a given horizon.
 api_stock(name)
@@ -90,6 +92,7 @@ def add(self, name, horizon = '2019-05-01'):
         self.pf[horizon] = {"stock":list(), "crypto":list()}
     elif name in self.pf[horizon]["stock"] or name in self.pf[horizon]["crypto"]:
         print(name + " already added to portfolio")
+        #data_show(self, name)
         return
     if name in self.stock:
         data_add(self, name)
@@ -117,8 +120,8 @@ def construct_pf(self):
     Constructs the portfolio.
     """
     horizon = list(self.pf.keys())[-1]
-    names = self.pf['horizon']
-    self.pfdta = data_get(names, horizon, self.pfdta)
+    names = self.pf[horizon]
+    self.pfdta = data_get(self, names, horizon, self.pfdta)
     return
 
 def data_store(self, name: str, dic: dict):
@@ -149,20 +152,22 @@ def data_add(self, name: str):
     """
     if name in self.data:
         print(name + " already added to data")
+        #data_show(self, name)
         return
     if name in self.stock:
         try:
             data_store(self, name, api_stock(self, name))
         except:
             print("Wrong API key, check it out!")
-        return
+        #data_show(self, name)
     if name in self.crypto:
         try:
             data_store(self, name, api_crypto(self, name))
         except:
             print("Wrong API key, check it out!")
+        #data_show(self, name)
         return
-    raise Exception("Wrong name or name type.")
+    print("Wrong name or name type.")
     return
 
 def data_remove(self, name: str):
@@ -179,6 +184,21 @@ def data_remove(self, name: str):
         self.data.pop(name)
     return
 
+def data_show(self, name: str):
+    """
+    data_show(name)
+        Plot data that has been asked or added to the portfolio or data.
+    ----------
+    Parameters
+    name : str
+        The index (ETF), crypto, or stock.
+    """
+    temp = self.data[name]
+    x, y = zip(*temp)
+    plt.plot(x, y)
+    plt.plot.show()
+    return
+
 def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame()):
     """
     Construct a portfolio for given stock and cryptos, and a given horizon.
@@ -189,11 +209,20 @@ def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame(
     horizon : str
         Starting date of sample.
     data : pd.DataFrame
-        (optional) Already transformed data, useful when adding only a few more entry to existing transformed data
+        (optional) Already transformed data, useful when adding only a few more entry to existing transformed data.
     """
     #The output to send to portfolio class
     send = pd.DataFrame()
     nameslist = names["stock"]+names["crypto"]
+    #Check the horizon is feasible for selected data
+    horizon_cache = horizon
+    for i in nameslist:
+        try:
+            test = self.data[i][horizon]
+        except:
+            horizon = list(self.data[i].keys())[-1]
+    if not horizon_cache == horizon:
+        print("Horizon went from " + horizon_cache + " to " + horizon + " because of selected data")
     #Check the cached data
     if not data.empty:
         #Take the names, and the horizon of cached data
@@ -214,9 +243,9 @@ def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame(
     #Stock data does not include week-ends, whereas crypto data does
     #Need same dimension if creates a portfolio with both!
     if len(names["stock"]):
-        daterestr = list(self.stock[list(self.stock.keys())[0]].keys())
+        daterestr = list(self.data[names["stock"][0]].keys())
     elif len(names["crypto"]):
-        daterestr = list(self.crypto[list(self.crypto.keys())[0]].keys())
+        daterestr = list(self.data[names["crypto"]][0].keys())
     #Now, create the DataFrame entry by entry...
     for i in nameslist:
         #First, for each entry of the portfolio, remove everything beyond the horizon of time
@@ -230,15 +259,8 @@ def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame(
         #Now, transform the dictionnary (1 column) into a DataFrame
         temp = pd.DataFrame.from_dict(temp, columns = [i], orient = "index")
         #Append this column to the final DataFrame
-        send[i] = pd.concat([temp, self.data[i]], axis=1)
+        send = pd.concat([send, temp], axis=1)
     return send
-
-def plot(self, name): ### Mettre dans portfolio évt.
-    df = self.data[str(name)]
-    col = df.columns
-    df.plot(x = col, y = self.data[str(name)])
-    plt.show()
-    return
 
 def api_stock(self, name: str):
     """
@@ -261,6 +283,3 @@ def api_crypto(self, name: str):
     """
     url = 'https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol='+ name + '&market=USD&apikey=' + self.key
     return requests.get(url).json()["Time Series (Digital Currency Daily)"]
-
-def watch_and_store(self):#plot a serie that just got called by the API
-    return
