@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_pageshYilaW.ui'
+## Form generated from reading UI file 'main_pagesTgeLaZ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.2
 ##
@@ -14,7 +14,7 @@ class Ui_MainPages(object):
     def setupUi(self, MainPages):
         if not MainPages.objectName():
             MainPages.setObjectName(u"MainPages")
-        MainPages.resize(834, 611)
+        MainPages.resize(1078, 798)
         font = QFont()
         font.setPointSize(14)
         font.setUnderline(False)
@@ -161,17 +161,6 @@ class Ui_MainPages(object):
         self.frame.setFrameShadow(QFrame.Raised)
         self.gridLayout_2 = QGridLayout(self.frame)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.button_frame = QFrame(self.frame)
-        self.button_frame.setObjectName(u"button_frame")
-        self.button_frame.setFrameShape(QFrame.NoFrame)
-        self.button_frame.setFrameShadow(QFrame.Raised)
-        self.button_layout = QGridLayout(self.button_frame)
-        self.button_layout.setSpacing(0)
-        self.button_layout.setObjectName(u"button_layout")
-        self.button_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.gridLayout_2.addWidget(self.button_frame, 4, 0, 1, 3)
-
         self.plot_frame = QFrame(self.frame)
         self.plot_frame.setObjectName(u"plot_frame")
         self.plot_frame.setFrameShape(QFrame.NoFrame)
@@ -181,16 +170,7 @@ class Ui_MainPages(object):
         self.plot_layout.setObjectName(u"plot_layout")
         self.plot_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.gridLayout_2.addWidget(self.plot_frame, 0, 1, 3, 2)
-
-        self.ask_frame = QFrame(self.frame)
-        self.ask_frame.setObjectName(u"ask_frame")
-        self.ask_frame.setFrameShape(QFrame.StyledPanel)
-        self.ask_frame.setFrameShadow(QFrame.Raised)
-        self.ask_layout = QVBoxLayout(self.ask_frame)
-        self.ask_layout.setObjectName(u"ask_layout")
-
-        self.gridLayout_2.addWidget(self.ask_frame, 3, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.plot_frame, 0, 2, 3, 2)
 
         self.ticker_frame = QFrame(self.frame)
         self.ticker_frame.setObjectName(u"ticker_frame")
@@ -201,7 +181,7 @@ class Ui_MainPages(object):
         self.ticker_layout.setObjectName(u"ticker_layout")
         self.ticker_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.gridLayout_2.addWidget(self.ticker_frame, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.ticker_frame, 2, 1, 1, 1)
 
         self.selection_frame = QFrame(self.frame)
         self.selection_frame.setObjectName(u"selection_frame")
@@ -212,7 +192,27 @@ class Ui_MainPages(object):
         self.selection_layout.setObjectName(u"selection_layout")
         self.selection_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.gridLayout_2.addWidget(self.selection_frame, 0, 0, 2, 1)
+        self.gridLayout_2.addWidget(self.selection_frame, 0, 1, 2, 1)
+
+        self.ask_frame = QFrame(self.frame)
+        self.ask_frame.setObjectName(u"ask_frame")
+        self.ask_frame.setFrameShape(QFrame.StyledPanel)
+        self.ask_frame.setFrameShadow(QFrame.Raised)
+        self.ask_layout = QVBoxLayout(self.ask_frame)
+        self.ask_layout.setObjectName(u"ask_layout")
+
+        self.gridLayout_2.addWidget(self.ask_frame, 3, 1, 1, 1)
+
+        self.frame_2 = QFrame(self.frame)
+        self.frame_2.setObjectName(u"frame_2")
+        self.frame_2.setFrameShape(QFrame.NoFrame)
+        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.add_layout = QVBoxLayout(self.frame_2)
+        self.add_layout.setSpacing(0)
+        self.add_layout.setObjectName(u"add_layout")
+        self.add_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.gridLayout_2.addWidget(self.frame_2, 3, 2, 1, 1)
 
 
         self.page_2_layout.addWidget(self.frame)

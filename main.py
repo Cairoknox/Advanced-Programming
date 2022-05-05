@@ -1,9 +1,9 @@
-from gui.uis.windows.main_window.functions_main_window import *
-from data_management import *
 import sys
 import os
 
 from qt_core import *
+
+from gui.uis.windows.main_window.functions_main_window import *
 
 from gui.core.json_settings import Settings
 
@@ -11,9 +11,26 @@ from gui.uis.windows.main_window import *
 
 from gui.widgets import *
 
-from data_management import *
+from portfolio import *
 
 os.environ["QT_FONT_DPI"] = "96"
+
+"""
+Attributes
+----------
+keys : list
+    Contains the IEX and the Alphavantage keys as strings for API calls.
+stock : dict
+    Stores all the API callable stocks with their ticker and full name.
+crypto : dict
+    Stores all the API callable cryptos with their ticker and full name.
+data : dict
+    Stores the full data that has been called through API calls in a nested dictionnary.
+pfdta : DataFrame
+    Stores the cleaned and trimmed data of the portfolio, ready to be optimised.
+pf : dict
+    Stores the name and horizon
+"""
 
 #The main window
 class MainWindow(QMainWindow):
@@ -25,6 +42,14 @@ class MainWindow(QMainWindow):
         self.settings = settings.items
         self.hide_grips = True
         SetupMainWindow.setup_gui(self)
+
+        self.key = "demo"
+        self.stock = dict()
+        self.crypto = dict()
+        self.data = dict()
+        boot(self)
+        self.pfdta = pd.DataFrame()
+        self.pf = dict()
 
         self.show()
 

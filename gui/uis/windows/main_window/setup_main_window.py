@@ -11,14 +11,14 @@ from gui.widgets import *
 from . ui_main import *
 from . functions_main_window import *
 
-from data_management import *
+from portfolio import *
 
 #What should the main window contain.
 class SetupMainWindow:
     def __init__(self):
         super().__init__()
-        self.ui = UI_MainWindow()
-        self.ui.setup_ui(self)
+        #self.ui = UI_MainWindow()
+        #self.ui.setup_ui(self)
     
     #Left menu buttons
     add_left_menus = [
@@ -95,18 +95,12 @@ class SetupMainWindow:
         self.line_API = QLineEdit()
         self.send_API = QPushButton("send")
         self.text = QLabel("connected")
-        #Save the API key entered by user and boot portfolio!
+        #Save the API key entered by user
         def print_API():
             API_key = self.line_API.text()
-            print(API_key)
             self.ui.load_pages.API_valid_layout.addWidget(self.text)
-            #Booting portfolio
-            self.portfolio = portfolio(self, API_key)
-            #Load everything in booted portfolio
-            with open("stock.json") as f:
-                self.portfolio.stock = json.load(f)
-            with open("crypto.json") as f:
-                self.portfolio.crypto = json.load(f)
+            self.key = API_key
+            print("API key loaded.")
         #Use the function on button click
         self.send_API.clicked.connect(print_API)
         #Display both the text field and the send button
@@ -116,18 +110,29 @@ class SetupMainWindow:
         #mainpage2: choose any ticker
         self.line_ticker = QLineEdit()
         self.ask_ticker = QPushButton("ask")
-        #Load stock and crypto tickers
-        
+        self.add_ticker = QPushButton("add")
         #Ask for the ticker entered by the user
         def ask_ticker():
             ticker = self.line_ticker.text()
-            if ticker in self.portfolio.stock or ticker in self.portfolio.crypto:
-                print("API CALL")
+            if ticker in self.stock or ticker in self.crypto:
+                data_add(self, ticker)
             else:
                 print("Wrong ticker")
+            return
         self.ask_ticker.clicked.connect(ask_ticker)
+        #Add the ticker to the portfolio
+        def add_ticker():
+            ticker = self.line_ticker.text()
+            if ticker in self.stock or ticker in self.crypto:
+                add(self, ticker)
+            else:
+                print("Wrong ticker")
+            return
+        self.add_ticker.clicked.connect(add_ticker)
+
         self.ui.load_pages.ticker_layout.addWidget(self.line_ticker)
         self.ui.load_pages.ask_layout.addWidget(self.ask_ticker)
+        self.ui.load_pages.add_layout.addWidget(self.add_ticker)
 
     #Resize the grips when window is resized
     def resize_grips(self):
