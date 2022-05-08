@@ -12,6 +12,7 @@ from . ui_main import *
 from . functions_main_window import *
 
 from portfolio import *
+from markowitz import *
 
 #What should the main window contain.
 class SetupMainWindow:
@@ -140,14 +141,19 @@ class SetupMainWindow:
 
         #mainpage3: Create portfolio
         self.construct = QPushButton("construct")
+        self.optimize = QPushButton("optimize")
         self.text_construct = QLabel("constructed")
         #Run data_get on button push
         def construct():
-            self.pfdta = construct_pf(self)
+            construct_pf(self)
             self.ui.load_pages.portfolio_layout.addWidget(self.text_construct)
         self.construct.clicked.connect(construct)
+        def optim():
+            markowitz(self)
+        self.optimize.clicked.connect(optim)
 
         self.ui.load_pages.portfolio_layout.addWidget(self.construct)
+        self.ui.load_pages.portfolio_layout.addWidget(self.optimize)
 
     #Resize the grips when window is resized
     def resize_grips(self):

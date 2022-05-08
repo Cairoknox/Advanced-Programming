@@ -19,6 +19,7 @@ import requests
 from datetime import datetime
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 """
 The ultimate module. Create your own portfolio. Here are the main functions that run and rule everything else.
@@ -121,7 +122,7 @@ def construct_pf(self):
     """
     horizon = list(self.pf.keys())[-1]
     names = self.pf[horizon]
-    self.pfdta = data_get(self, names, horizon, self.pfdta)
+    data_get(self, names, horizon, self.pfdta)
     return
 
 def data_store(self, name: str, dic: dict):
@@ -160,6 +161,7 @@ def data_add(self, name: str):
         except:
             print("Wrong API key, check it out!")
         #data_show(self, name)
+        return
     if name in self.crypto:
         try:
             data_store(self, name, api_crypto(self, name))
@@ -201,7 +203,7 @@ def data_show(self, name: str):
 
 def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame()):
     """
-    Construct a portfolio for given stock and cryptos, and a given horizon.
+    Construct a portfolio with logarithmic returns for given stock and cryptos, and a given horizon.
     ----------
     Parameters
     names : dict
@@ -245,7 +247,7 @@ def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame(
     if len(names["stock"]):
         daterestr = list(self.data[names["stock"][0]].keys())
     elif len(names["crypto"]):
-        daterestr = list(self.data[names["crypto"]][0].keys())
+        daterestr = list(self.data[names["crypto"][0]].keys())
     #Now, create the DataFrame entry by entry...
     for i in nameslist:
         #First, for each entry of the portfolio, remove everything beyond the horizon of time
@@ -260,7 +262,9 @@ def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame(
         temp = pd.DataFrame.from_dict(temp, columns = [i], orient = "index")
         #Append this column to the final DataFrame
         send = pd.concat([send, temp], axis=1)
-    return send
+    send = send.apply(pd.to_numeric)
+    self.pfdta = np.log(send/send.shift(1)).iloc[1:]
+    return
 
 def api_stock(self, name: str):
     """
