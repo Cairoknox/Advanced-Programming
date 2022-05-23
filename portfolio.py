@@ -1,20 +1,11 @@
-    #1. Ask for API key
-    #2. Charge list of possible stocks and cryptos
-    #3. Create portfolio object with the two previous imputs
-    #4. Propose list of stocks and cryptos
-    #7. Link charge button to the get_data.add() function
-    #8. Directly call a plot function to display the charged data if option is checked (make a box to tick ?)
-    #9. Link add to portfolio button to the portfolio.add() function
+
     #10. Link remove from portfolio button to the portfolio.remove() function
-    #11. Link construct portfolio button to the portfolio.construct_pf() function
     #12. Link free up space button to the get_data.remove() function
 
 #AV : S5D9F26JVZ9GHH29
 
-import sys
 import os
 import json
-import csv
 import requests
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -32,7 +23,7 @@ Methods
 ----------
 boot()
     Tries to use data in cache. If outdated, makes a backup and loads empty dictionnary.
-add(name, horizon)
+add(name)
     Add an entry to the portfolio to construct.
 remove(name)
     Remove an entry from the portfolio to construct.
@@ -42,12 +33,10 @@ data_store(name, dic)
     Stores new data from API call in a dictionnary.
 data_add(name)
     Tries to call new data iif it is not already in storage.
-data_remove(name)
-    Tries to remove a stock or a crypto from the storage to free up space.
 data_show(name)
     Plot data that has been asked or added to the portfolio or data.
-data_get(names, horizon, data = pd.DataFrame())
-    Construct a portfolio for given stock and cryptos, and a given horizon.
+data_get(names, data = pd.DataFrame())
+    Construct a portfolio for given stock and cryptos.
 api_stock(name)
     Used for stock and index (ETF). Returns a dictionary of daily data.
 api_crypto(name)
@@ -64,12 +53,11 @@ def boot(self):
     with open("crypto.json") as f:
         self.crypto = json.load(f)
         print("Crypto tickers loaded")
-    today = requests.get("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo").json()["Meta Data"]["3. Last Refreshed"]
     try:
         with open("data.json") as f:
             self.data = json.load(f)
             print("data loaded")
-        if not list(self.data[list(self.data.keys())[0]].keys())[0] == today:
+        if not list(self.data[list(self.data.keys())[0]].keys())[0] == self.today:
             with open("data_backup.json", "w+") as f:
                 json.dump(self.data, f)
             os.remove("data.json")
@@ -79,31 +67,28 @@ def boot(self):
         print("I tried to open data.json but doesn't exist.")
         pass
 
-def add(self, name, horizon = '2019-05-01'):
+def add(self, name):
     """
     Add an entry to the portfolio to construct.
     ----------
     Parameters
     name : str
         The index (ETF), crypto, or stock.
-    horizon : str
-        (optional) Indicates the max date of the portfolio. Default is 1st May 2019.
     """
-    if horizon not in list(self.pf.keys()):
-        self.pf[horizon] = {"stock":list(), "crypto":list()}
-    elif name in self.pf[horizon]["stock"] or name in self.pf[horizon]["crypto"]:
+    if self.horizon not in list(self.pf.keys()):
+        self.pf[self.horizon] = {"stock":list(), "crypto":list()}
+    elif name in self.pf[self.horizon]["stock"] or name in self.pf[self.horizon]["crypto"]:
         print(name + " already added to portfolio")
-        #data_show(self, name)
-        return
+        return 0
     if name in self.stock:
         data_add(self, name)
-        self.pf[horizon]["stock"].append(name)
+        self.pf[self.horizon]["stock"].append(name)
         print(name + " added to portfolio")
     elif name in self.crypto:
         data_add(self, name)
-        self.pf[horizon]["crypto"].append(name)
+        self.pf[self.horizon]["crypto"].append(name)
         print(name + " added to portfolio")
-    return
+    return 1
 
 def remove(self, name):
     """
@@ -113,16 +98,19 @@ def remove(self, name):
     name : str
         The index (ETF), crypto, or stock.
     """
-    self.pf = self.pf.pop(name)
+    if name in self.stock:
+        self.pf[self.horizon]["stock"].remove(name)
+    elif name in self.crypto:
+        self.pf[self.horizon]["crypto"].remove(name)
     return
 
 def construct_pf(self):
     """
     Constructs the portfolio.
     """
-    horizon = list(self.pf.keys())[-1]
-    names = self.pf[horizon]
-    data_get(self, names, horizon, self.pfdta)
+    self.horizondyn = list(self.pf.keys())[-1]
+    names = self.pf[self.horizondyn]
+    data_get(self, names, self.horizondyn, self.pfdta)
     return
 
 def data_store(self, name: str, dic: dict):
@@ -172,20 +160,6 @@ def data_add(self, name: str):
     print("Wrong name or name type.")
     return
 
-def data_remove(self, name: str):
-    """
-    Tries to remove a stock or a crypto from the storage to free up space.
-    ----------
-    Parameters
-    name : str
-        The index (ETF), crypto, or stock.
-    """
-    if name not in self.data:
-        return
-    elif name in self.data:
-        self.data.pop(name)
-    return
-
 def data_show(self, name: str):
     """
     data_show(name)
@@ -201,15 +175,13 @@ def data_show(self, name: str):
     plt.plot.show()
     return
 
-def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame()):
+def data_get(self, names: dict, data: pd.DataFrame = pd.DataFrame()):
     """
     Construct a portfolio with logarithmic returns for given stock and cryptos, and a given horizon.
     ----------
     Parameters
     names : dict
         Contains lists for stock and crypto entries.
-    horizon : str
-        Starting date of sample.
     data : pd.DataFrame
         (optional) Already transformed data, useful when adding only a few more entry to existing transformed data.
     """
@@ -217,25 +189,25 @@ def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame(
     send = pd.DataFrame()
     nameslist = names["stock"]+names["crypto"]
     #Check the horizon is feasible for selected data
-    horizon_cache = horizon
+    horizon_cache = self.horizondyn
     for i in nameslist:
         try:
-            test = self.data[i][horizon]
+            test = self.data[i][self.horizondyn]
         except:
-            horizon = list(self.data[i].keys())[-1]
-    if not horizon_cache == horizon:
-        print("Horizon went from " + horizon_cache + " to " + horizon + " because of selected data")
+            self.horizondyn = list(self.data[i].keys())[-1]
+    if not horizon_cache == self.horizondyn:
+        print("horizon went from " + horizon_cache + " to " + self.horizondyn + " because of selected data")
     #Check the cached data
     if not data.empty:
         #Take the names, and the horizon of cached data
         datanames = list(data.columns)
         datahorizon = data.index[-1]
         #If longer horizon, remove what's beyond
-        if datetime.strptime(datahorizon, '%Y-%m-%d') < datetime.strptime(horizon, '%Y-%m-%d'):
-            data = data.drop(data.tail(-list(data.index).index(horizon)-1).index)
+        if datetime.strptime(datahorizon, '%Y-%m-%d') < datetime.strptime(self.horizondyn, '%Y-%m-%d'):
+            data = data.drop(data.tail(-list(data.index).index(self.horizondyn)-1).index)
         #If longer or same horizon, remove useless columns from cache and update nameslist
         #Then, add the reviewed cached data to the send DataFrame
-        if datetime.strptime(datahorizon, '%Y-%m-%d') <= datetime.strptime(horizon, '%Y-%m-%d'):
+        if datetime.strptime(datahorizon, '%Y-%m-%d') <= datetime.strptime(self.horizondyn, '%Y-%m-%d'):
             coldata = data.columns
             data[coldata.intersection(nameslist)]
             nameslist = [i for i in set(nameslist) if i not in coldata]
@@ -257,7 +229,7 @@ def data_get(self, names: dict, horizon: str, data: pd.DataFrame = pd.DataFrame(
         elif i in self.crypto:
             a = "4a. close (USD)"
         #Here, we make use of our daterestr to not include week-ends when we mix cryptos and stock
-        temp = {j:self.data[i][j][a] for j in daterestr if datetime.strptime(j, '%Y-%m-%d') > datetime.strptime(horizon, '%Y-%m-%d')}
+        temp = {j:self.data[i][j][a] for j in daterestr if datetime.strptime(j, '%Y-%m-%d') > datetime.strptime(self.horizondyn, '%Y-%m-%d')}
         #Now, transform the dictionnary (1 column) into a DataFrame
         temp = pd.DataFrame.from_dict(temp, columns = [i], orient = "index")
         #Append this column to the final DataFrame

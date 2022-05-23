@@ -1,37 +1,30 @@
-from gui.widgets.py_table_widget.py_table_widget import PyTableWidget
+#Front-end
 from . functions_main_window import *
-import sys
-import os
-import json
 from qt_core import *
 from gui.core.json_settings import Settings
 from gui.core.json_themes import Themes
 from gui.widgets import *
-
 from . ui_main import *
 from . functions_main_window import *
 
+#Back-end
 from portfolio import *
 from markowitz import *
 
-#What should the main window contain.
+#What should the main window contain
 class SetupMainWindow:
     def __init__(self):
         super().__init__()
-        #self.ui = UI_MainWindow()
-        #self.ui.setup_ui(self)
     
     #Left menu buttons
     add_left_menus = [
         {"btn_icon" : "icon_home.svg", "btn_id" : "btn_home", "btn_text" : "Home", "btn_tooltip" : "Home page", "show_top" : True, "is_active" : True},
         {"btn_icon" : "icon_file.svg", "btn_id" : "btn_market", "btn_text" : "Market data", "btn_tooltip" : "Market data", "show_top" : True, "is_active" : False},
         {"btn_icon" : "icon_file.svg", "btn_id" : "btn_portfolio", "btn_text" : "Portfolio", "btn_tooltip" : "Portfolio", "show_top" : True, "is_active" : False},
-        {"btn_icon" : "icon_info.svg", "btn_id" : "btn_about", "btn_text" : "About", "btn_tooltip" : "About", "show_top" : False, "is_active" : False},
-        {"btn_icon" : "icon_settings.svg", "btn_id" : "btn_settings", "btn_text" : "Settings", "btn_tooltip" : "Settings", "show_top" : False, "is_active" : False}
+        {"btn_icon" : "icon_info.svg", "btn_id" : "btn_about", "btn_text" : "About", "btn_tooltip" : "About", "show_top" : False, "is_active" : False}
     ]
     #Title bar menu buttons
     add_title_bar_menus = [
-        {"btn_icon" : "icon_search.svg", "btn_id" : "btn_search", "btn_tooltip" : "Search", "is_active" : False},
         {"btn_icon" : "icon_settings.svg", "btn_id" : "btn_top_settings", "btn_tooltip" : "Top settings", "is_active" : False}
     ]
     
@@ -44,7 +37,7 @@ class SetupMainWindow:
         elif self.ui.left_column.sender() != None:
             return self.ui.left_column.sender()
     
-    #Customized settings of the GUI
+    #Interaction between front- and back-end
     def setup_gui(self):
         self.setWindowTitle(self.settings["app_name"])
         #For a more modern look, we remove the OS frame
@@ -65,12 +58,10 @@ class SetupMainWindow:
         self.ui.left_menu.add_menus(SetupMainWindow.add_left_menus)
         #Trigger an event when left menu button is clicked
         self.ui.left_menu.clicked.connect(self.btn_clicked)
-        self.ui.left_menu.released.connect(self.btn_released)
         #Add title bar menu
         self.ui.title_bar.add_menus(SetupMainWindow.add_title_bar_menus)
         #Trigger an event when title bar menu button is clicked
         self.ui.title_bar.clicked.connect(self.btn_clicked)
-        self.ui.title_bar.released.connect(self.btn_released)
         #Add the custom title bar to the GUI
         if self.settings["custom_title_bar"]:
             self.ui.title_bar.set_title(self.settings["app_name"])
@@ -79,7 +70,6 @@ class SetupMainWindow:
         #Add the left column menu
         #Trigger an event when left column menu button is clicked
         self.ui.left_column.clicked.connect(self.btn_clicked)
-        self.ui.left_column.released.connect(self.btn_released)
         #Page on start of application
         MainFunctions.set_page(self, self.ui.load_pages.page_1)
         #Load settings and themes
@@ -94,7 +84,9 @@ class SetupMainWindow:
         
         #mainpage: Add API key manager
         self.line_API = QLineEdit()
-        self.send_API = QPushButton("send")
+        self.send_API = PyPushButton(text="send", radius=8,
+        color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
+        bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
         self.text = QLabel("connected")
         #Save the API key entered by user
         def print_API():
@@ -105,7 +97,8 @@ class SetupMainWindow:
             else:
                 self.text.text("error")
                 print("API key cannot be empty")
-            self.ui.load_pages.API_valid_layout.addWidget(self.text)
+            #self.ui.load_pages.API_valid_layout.addWidget(self.text)
+            self.ui.load_pages.send_layout.addWidget(self.text)
         #Use the function on button click
         self.send_API.clicked.connect(print_API)
         #Display both the text field and the send button
@@ -114,35 +107,106 @@ class SetupMainWindow:
 
         #mainpage2: Choose any ticker
         self.line_ticker = QLineEdit()
-        self.ask_ticker = QPushButton("ask")
-        self.add_ticker = QPushButton("add")
-        #Ask for the ticker entered by the user
-        def ask_ticker():
-            ticker = self.line_ticker.text()
-            if ticker in self.stock or ticker in self.crypto:
-                data_add(self, ticker)
-            else:
-                print("Wrong ticker")
-            return
-        self.ask_ticker.clicked.connect(ask_ticker)
+        self.add_ticker = PyPushButton(text="add", radius=8,
+        color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
+        bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
         #Add the ticker to the portfolio
         def add_ticker():
             ticker = self.line_ticker.text()
             if ticker in self.stock or ticker in self.crypto:
-                add(self, ticker)
+                success = add(self, ticker)
+                if success:
+                    update_table(ticker, 'add')
             else:
                 print("Wrong ticker")
             return
         self.add_ticker.clicked.connect(add_ticker)
 
-        self.ui.load_pages.ticker_layout.addWidget(self.line_ticker)
-        self.ui.load_pages.ask_layout.addWidget(self.ask_ticker)
-        self.ui.load_pages.add_layout.addWidget(self.add_ticker)
+        self.ui.load_pages.ask_layout.addWidget(self.line_ticker)
+        self.ui.load_pages.ask_layout.addWidget(self.add_ticker)
+        #mainpage2: Table
+        self.table_widget = PyTableWidget(
+            radius = 8,
+            color = self.themes["app_color"]["text_foreground"],
+            selection_color = self.themes["app_color"]["context_color"],
+            bg_color = self.themes["app_color"]["bg_two"],
+            header_horizontal_color = self.themes["app_color"]["dark_two"],
+            header_vertical_color = self.themes["app_color"]["bg_three"],
+            bottom_line_color = self.themes["app_color"]["bg_three"],
+            grid_line_color = self.themes["app_color"]["bg_one"],
+            scroll_bar_bg_color = self.themes["app_color"]["bg_one"],
+            scroll_bar_btn_color = self.themes["app_color"]["dark_four"],
+            context_color = self.themes["app_color"]["context_color"]
+        )
+        #Size and column names
+        self.table_widget.setColumnCount(3)
+        self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table_widget.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.column_1 = QTableWidgetItem()
+        self.column_1.setTextAlignment(Qt.AlignCenter)
+        self.column_1.setText("Stock")
+        self.column_2 = QTableWidgetItem()
+        self.column_2.setTextAlignment(Qt.AlignCenter)
+        self.column_2.setText("Ticker")
+        self.column_3 = QTableWidgetItem()
+        self.column_3.setTextAlignment(Qt.AlignCenter)
+        self.column_3.setText("Last close (USD)")
+        self.table_widget.setHorizontalHeaderItem(0, self.column_1)
+        self.table_widget.setHorizontalHeaderItem(1, self.column_2)
+        self.table_widget.setHorizontalHeaderItem(2, self.column_3)
+        #Add a row
+        def update_table(ticker, action):
+            if action == 'add':
+                nrow = self.table_widget.rowCount()
+                self.table_widget.insertRow(nrow)
+                self.table_widget.setRowHeight(nrow, 22)
+                self.table_widget.setItem(nrow, 1, QTableWidgetItem(ticker))
+                self.closing = QTableWidgetItem()
+                self.closing.setTextAlignment(Qt.AlignRight)
+                
+                if ticker in self.crypto:
+                    self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.crypto[ticker]))
+                    self.closing.setText(str(round(float(self.data[ticker][self.today]["4a. close (USD)"]),4)))
+                elif ticker in self.stock:
+                    self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.stock[ticker]))
+                    self.closing.setText(str(round(float(self.data[ticker][self.today]["4. close"]),4)))
+                self.table_widget.setItem(nrow, 2, self.closing)
+                return
+            elif action == 'remove':
+                try:
+                    ticker = self.table_widget.item(self.table_widget.currentRow(),1).text()
+                    remove(self, ticker)
+                    print(ticker + ' removed from portfolio')
+                    self.table_widget.removeRow(self.table_widget.currentRow())
+                    self.table_widget.item
+                except:
+                    print('Nothing to remove')
+                return
+        self.ui.load_pages.plot_layout.addWidget(self.table_widget)
+        #Remove a row
+        self.delete = PyPushButton(text="delete", radius=8,
+        color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
+        bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
+        def remove_ticker():
+            update_table(None, 'remove')
+            return
+        self.delete.clicked.connect(remove_ticker)
+        self.ui.load_pages.ask_layout.addWidget(self.delete)
 
         #mainpage3: Create portfolio
-        self.construct = QPushButton("construct")
-        self.optimize = QPushButton("optimize")
+        self.construct = PyPushButton(text="construct", radius=8,
+        color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
+        bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
+
+        self.optimize = PyPushButton(text="optimize", radius=8,
+        color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
+        bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
+
         self.text_construct = QLabel("constructed")
+        #self.figure = plt.figure(figsize = (12, 8))
+        #self.canvas = FigureCanvas(self.figure)
+
         #Run data_get on button push
         def construct():
             construct_pf(self)
@@ -150,10 +214,12 @@ class SetupMainWindow:
         self.construct.clicked.connect(construct)
         def optim():
             markowitz(self)
+            markoplot(self, self.vol_arr, self.ret_arr, self.max_sr_vol, self.max_sr_ret, self.sharpe_arr)
         self.optimize.clicked.connect(optim)
 
         self.ui.load_pages.portfolio_layout.addWidget(self.construct)
         self.ui.load_pages.portfolio_layout.addWidget(self.optimize)
+        #self.ui.load_pages.markowitz_layout.addWidget(self.canvas)
 
     #Resize the grips when window is resized
     def resize_grips(self):

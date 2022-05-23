@@ -7,9 +7,9 @@ def markowitz(self):
     num_ports = 6000
     num_asset = len(self.pfdta.columns)
     all_weights = np.zeros((num_ports, num_asset))
-    ret_arr = np.zeros(num_ports)
-    vol_arr = np.zeros(num_ports)
-    sharpe_arr = np.zeros(num_ports)
+    self.ret_arr = np.zeros(num_ports)
+    self.vol_arr = np.zeros(num_ports)
+    self.sharpe_arr = np.zeros(num_ports)
     
 
     for x in range(num_ports):
@@ -17,13 +17,13 @@ def markowitz(self):
         weights = weights/np.sum(weights)
         all_weights[x,:] = weights
 
-        ret_arr[x] = np.sum((self.pfdta.mean()*weights*252))
-        vol_arr[x] = np.sqrt(np.dot(weights.T, np.dot(self.pfdta.cov()*252, weights)))
+        self.ret_arr[x] = np.sum((self.pfdta.mean()*weights*252))
+        self.vol_arr[x] = np.sqrt(np.dot(weights.T, np.dot(self.pfdta.cov()*252, weights)))
 
-        sharpe_arr[x] = ret_arr[x]/vol_arr[x]
+        self.sharpe_arr[x] = self.ret_arr[x]/self.vol_arr[x]
 
-    max_sr_ret = ret_arr[sharpe_arr.argmax()]
-    max_sr_vol = vol_arr[sharpe_arr.argmax()]
+    self.max_sr_ret = self.ret_arr[self.sharpe_arr.argmax()]
+    self.max_sr_vol = self.vol_arr[self.sharpe_arr.argmax()]
     
     #constraints = ({'type': 'eq', 'fun':check_sum})
     #bounds = ((0, 1), (0, 1), (0, 1), (0, 1))
@@ -43,17 +43,17 @@ def markowitz(self):
     #    result = minimize(minimize_volatility,init_guess,method='SLSQP', bounds=bounds, constraints=constraints)
     #    frontier_x.append(result['fun'])
 
-
-    plt.figure(figsize=(12,8))
-    plt.scatter(vol_arr, ret_arr, c=sharpe_arr, cmap='viridis')
+def markoplot(self, x, y, maxX, maxY, colclass):
+    self.figure.clear()
+    plt.scatter(x, y, c=colclass, cmap='viridis')
     plt.colorbar(label='Sharpe Ratio')
     plt.xlabel('Volatility')
     plt.ylabel('Return')
-    plt.scatter(max_sr_vol, max_sr_ret,c='red', s=50)
+    plt.scatter(maxX, maxY, c='red', s=50)
     #plt.plot(frontier_x, frontier_y, 'r--', linewidth=3)
-    plt.show()
+    self.canvas.draw()
 
-def get_ret_vol_sr(weights):
+def get_ret_vol_sr(weights, log_ret):
     weights = np.array(weights)
     ret = np.sum(log_ret.mean()*weights)*252
     vol = np.sqrt(np.dot(weights.T, np.dot(log_ret.cov()*252, weights)))
