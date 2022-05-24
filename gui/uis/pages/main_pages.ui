@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1078</width>
-    <height>799</height>
+    <height>827</height>
    </rect>
   </property>
   <property name="font">
@@ -42,7 +42,7 @@
       <string notr="true">font-size: 14pt;background: rgb(60, 68, 84);</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="page_1">
       <property name="font">
@@ -145,8 +145,6 @@
                 <font>
                  <family>MS Shell Dlg 2</family>
                  <pointsize>16</pointsize>
-                 <weight>50</weight>
-                 <bold>false</bold>
                 </font>
                </property>
                <property name="styleSheet">
@@ -201,39 +199,6 @@
              </property>
              <item>
               <widget class="QFrame" name="API_key_frame">
-               <property name="maximumSize">
-                <size>
-                 <width>300</width>
-                 <height>120</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QVBoxLayout" name="API_key_layout">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QFrame" name="send_frame">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -242,7 +207,7 @@
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>200</width>
+                 <width>400</width>
                  <height>120</height>
                 </size>
                </property>
@@ -252,40 +217,7 @@
                <property name="frameShadow">
                 <enum>QFrame::Raised</enum>
                </property>
-               <layout class="QVBoxLayout" name="send_layout">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QFrame" name="API_valid_frame">
-               <property name="maximumSize">
-                <size>
-                 <width>200</width>
-                 <height>120</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QVBoxLayout" name="API_valid_layout">
+               <layout class="QHBoxLayout" name="API_key_layout">
                 <property name="spacing">
                  <number>0</number>
                 </property>
@@ -340,8 +272,6 @@
                 <font>
                  <family>MS Shell Dlg 2</family>
                  <pointsize>14</pointsize>
-                 <weight>50</weight>
-                 <bold>false</bold>
                 </font>
                </property>
                <property name="text">
@@ -450,7 +380,7 @@
             </property>
             <property name="maximumSize">
              <size>
-              <width>300</width>
+              <width>450</width>
               <height>240</height>
              </size>
             </property>
@@ -484,7 +414,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page"/>
      <widget class="QWidget" name="page_3">
       <property name="styleSheet">
        <string notr="true"/>
@@ -516,77 +445,23 @@
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <property name="leftMargin">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
            <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>10</number>
           </property>
           <property name="topMargin">
-           <number>0</number>
+           <number>10</number>
           </property>
           <property name="rightMargin">
-           <number>0</number>
+           <number>10</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item row="1" column="0" rowspan="2">
-           <widget class="QFrame" name="portfolio_frame">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QVBoxLayout" name="portfolio_layout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QFrame" name="optimize_frame">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QVBoxLayout" name="optimize_layout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="1" rowspan="3" colspan="2">
+          <item>
            <widget class="QFrame" name="markowitz_frame">
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
@@ -595,6 +470,39 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QVBoxLayout" name="markowitz_layout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+            </layout>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+           <widget class="QFrame" name="constroptimize_frame">
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>240</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="constroptimize_layout">
              <property name="spacing">
               <number>0</number>
              </property>

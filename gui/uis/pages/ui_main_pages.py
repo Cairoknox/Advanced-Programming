@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_pagesqvkucp.ui'
+## Form generated from reading UI file 'main_pagesGNuZMb.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.2
 ##
@@ -14,7 +14,7 @@ class Ui_MainPages(object):
     def setupUi(self, MainPages):
         if not MainPages.objectName():
             MainPages.setObjectName(u"MainPages")
-        MainPages.resize(1078, 799)
+        MainPages.resize(1078, 827)
         font = QFont()
         font.setPointSize(14)
         font.setUnderline(False)
@@ -63,7 +63,6 @@ class Ui_MainPages(object):
         font2 = QFont()
         font2.setFamily(u"MS Shell Dlg 2")
         font2.setPointSize(16)
-        font2.setBold(False)
         self.welcome_message.setFont(font2)
         self.welcome_message.setStyleSheet(u"font-size: 16pt")
         self.welcome_message.setAlignment(Qt.AlignCenter)
@@ -85,40 +84,16 @@ class Ui_MainPages(object):
         self.API_layout.setContentsMargins(0, 0, 0, 0)
         self.API_key_frame = QFrame(self.API_frame)
         self.API_key_frame.setObjectName(u"API_key_frame")
-        self.API_key_frame.setMaximumSize(QSize(300, 120))
+        self.API_key_frame.setMinimumSize(QSize(0, 20))
+        self.API_key_frame.setMaximumSize(QSize(400, 120))
         self.API_key_frame.setFrameShape(QFrame.NoFrame)
         self.API_key_frame.setFrameShadow(QFrame.Raised)
-        self.API_key_layout = QVBoxLayout(self.API_key_frame)
+        self.API_key_layout = QHBoxLayout(self.API_key_frame)
         self.API_key_layout.setSpacing(0)
         self.API_key_layout.setObjectName(u"API_key_layout")
         self.API_key_layout.setContentsMargins(0, 0, 0, 0)
 
         self.API_layout.addWidget(self.API_key_frame)
-
-        self.send_frame = QFrame(self.API_frame)
-        self.send_frame.setObjectName(u"send_frame")
-        self.send_frame.setMinimumSize(QSize(0, 20))
-        self.send_frame.setMaximumSize(QSize(200, 120))
-        self.send_frame.setFrameShape(QFrame.NoFrame)
-        self.send_frame.setFrameShadow(QFrame.Raised)
-        self.send_layout = QVBoxLayout(self.send_frame)
-        self.send_layout.setSpacing(0)
-        self.send_layout.setObjectName(u"send_layout")
-        self.send_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.API_layout.addWidget(self.send_frame)
-
-        self.API_valid_frame = QFrame(self.API_frame)
-        self.API_valid_frame.setObjectName(u"API_valid_frame")
-        self.API_valid_frame.setMaximumSize(QSize(200, 120))
-        self.API_valid_frame.setFrameShape(QFrame.NoFrame)
-        self.API_valid_frame.setFrameShadow(QFrame.Raised)
-        self.API_valid_layout = QVBoxLayout(self.API_valid_frame)
-        self.API_valid_layout.setSpacing(0)
-        self.API_valid_layout.setObjectName(u"API_valid_layout")
-        self.API_valid_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.API_layout.addWidget(self.API_valid_frame)
 
 
         self.gridLayout.addWidget(self.API_frame, 4, 0, 1, 3)
@@ -134,11 +109,7 @@ class Ui_MainPages(object):
         self.welcome_message_2 = QLabel(self.frame)
         self.welcome_message_2.setObjectName(u"welcome_message_2")
         self.welcome_message_2.setEnabled(True)
-        font3 = QFont()
-        font3.setFamily(u"MS Shell Dlg 2")
-        font3.setPointSize(14)
-        font3.setBold(False)
-        self.welcome_message_2.setFont(font3)
+        self.welcome_message_2.setFont(font1)
         self.welcome_message_2.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.welcome_message_2)
@@ -181,7 +152,7 @@ class Ui_MainPages(object):
         self.ask_frame = QFrame(self.main_frame_2)
         self.ask_frame.setObjectName(u"ask_frame")
         self.ask_frame.setMinimumSize(QSize(300, 120))
-        self.ask_frame.setMaximumSize(QSize(300, 240))
+        self.ask_frame.setMaximumSize(QSize(450, 240))
         self.ask_frame.setFrameShape(QFrame.NoFrame)
         self.ask_frame.setFrameShadow(QFrame.Raised)
         self.ask_layout = QHBoxLayout(self.ask_frame)
@@ -195,9 +166,6 @@ class Ui_MainPages(object):
         self.page_2_layout.addWidget(self.main_frame_2)
 
         self.pages.addWidget(self.page_2)
-        self.page = QWidget()
-        self.page.setObjectName(u"page")
-        self.pages.addWidget(self.page)
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
         self.page_3.setStyleSheet(u"")
@@ -210,32 +178,10 @@ class Ui_MainPages(object):
         self.main_frame_3.setStyleSheet(u"font-size: 14pt;background: transparent;")
         self.main_frame_3.setFrameShape(QFrame.NoFrame)
         self.main_frame_3.setFrameShadow(QFrame.Raised)
-        self.gridLayout_3 = QGridLayout(self.main_frame_3)
-        self.gridLayout_3.setSpacing(0)
-        self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.portfolio_frame = QFrame(self.main_frame_3)
-        self.portfolio_frame.setObjectName(u"portfolio_frame")
-        self.portfolio_frame.setFrameShape(QFrame.NoFrame)
-        self.portfolio_frame.setFrameShadow(QFrame.Raised)
-        self.portfolio_layout = QVBoxLayout(self.portfolio_frame)
-        self.portfolio_layout.setSpacing(0)
-        self.portfolio_layout.setObjectName(u"portfolio_layout")
-        self.portfolio_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.gridLayout_3.addWidget(self.portfolio_frame, 1, 0, 2, 1)
-
-        self.optimize_frame = QFrame(self.main_frame_3)
-        self.optimize_frame.setObjectName(u"optimize_frame")
-        self.optimize_frame.setFrameShape(QFrame.NoFrame)
-        self.optimize_frame.setFrameShadow(QFrame.Raised)
-        self.optimize_layout = QVBoxLayout(self.optimize_frame)
-        self.optimize_layout.setSpacing(0)
-        self.optimize_layout.setObjectName(u"optimize_layout")
-        self.optimize_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.gridLayout_3.addWidget(self.optimize_frame, 0, 0, 1, 1)
-
+        self.verticalLayout_2 = QVBoxLayout(self.main_frame_3)
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(10, 10, 10, 0)
         self.markowitz_frame = QFrame(self.main_frame_3)
         self.markowitz_frame.setObjectName(u"markowitz_frame")
         self.markowitz_frame.setFrameShape(QFrame.NoFrame)
@@ -245,7 +191,19 @@ class Ui_MainPages(object):
         self.markowitz_layout.setObjectName(u"markowitz_layout")
         self.markowitz_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.gridLayout_3.addWidget(self.markowitz_frame, 0, 1, 3, 2)
+        self.verticalLayout_2.addWidget(self.markowitz_frame)
+
+        self.constroptimize_frame = QFrame(self.main_frame_3)
+        self.constroptimize_frame.setObjectName(u"constroptimize_frame")
+        self.constroptimize_frame.setMaximumSize(QSize(300, 240))
+        self.constroptimize_frame.setFrameShape(QFrame.NoFrame)
+        self.constroptimize_frame.setFrameShadow(QFrame.Raised)
+        self.constroptimize_layout = QHBoxLayout(self.constroptimize_frame)
+        self.constroptimize_layout.setSpacing(0)
+        self.constroptimize_layout.setObjectName(u"constroptimize_layout")
+        self.constroptimize_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.verticalLayout_2.addWidget(self.constroptimize_frame, 0, Qt.AlignHCenter|Qt.AlignVCenter)
 
 
         self.page_3_layout.addWidget(self.main_frame_3)
@@ -257,7 +215,7 @@ class Ui_MainPages(object):
 
         self.retranslateUi(MainPages)
 
-        self.pages.setCurrentIndex(1)
+        self.pages.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainPages)

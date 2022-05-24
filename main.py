@@ -26,7 +26,8 @@ class MainWindow(QMainWindow):
         self.stock = dict()
         self.crypto = dict()
         self.data = dict()
-        self.today = requests.get("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo").json()["Meta Data"]["3. Last Refreshed"]
+        self.today = requests.get("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo").json()["Meta Data"]["3. Last Refreshed"][0:10]
+        print(self.today)
         self.pfdta = pd.DataFrame()
         self.pf = dict()
         boot(self)
@@ -63,12 +64,8 @@ class MainWindow(QMainWindow):
             self.ui.left_menu.select_only_one(btn.objectName())
             #Load page
             MainFunctions.set_page(self, self.ui.load_pages.page_3)
-        
-        top_btn_settings = MainFunctions.get_title_bar_btn(self, "btn_top_settings")
         #Open about menu
         if btn.objectName() == "btn_about" or btn.objectName() == "btn_close_left_column":
-            #Disable selection on title bar
-            top_btn_settings.set_active(False)
             #Check if left column is visible
             if not MainFunctions.left_column_is_visible(self):
                 #If not, show it
@@ -87,21 +84,6 @@ class MainWindow(QMainWindow):
                 menu = self.ui.left_column.menus.menu_1,
                 title = "About",
                 icon_path = Functions.set_svg_icon("icon_info.svg"))
-        
-        #Open right settings menu
-        if btn.objectName() == "btn_top_settings":
-            # Toogle Active
-            if not MainFunctions.right_column_is_visible(self):
-                btn.set_active(True)
-
-                # Show / Hide
-                MainFunctions.toggle_right_column(self)
-            else:
-                btn.set_active(False)
-
-                # Show / Hide
-                MainFunctions.toggle_right_column(self)
-
             # Get about menu
             btn_about = MainFunctions.get_left_menu_btn(self, "btn_about")
             btn_about.set_active_tab(False)

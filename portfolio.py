@@ -81,14 +81,20 @@ def add(self, name):
         print(name + " already added to portfolio")
         return 0
     if name in self.stock:
-        data_add(self, name)
+        success = data_add(self, name)
+        if success == 0:
+            return 0
         self.pf[self.horizon]["stock"].append(name)
         print(name + " added to portfolio")
+        return 1
     elif name in self.crypto:
-        data_add(self, name)
+        success = data_add(self, name)
+        if success == 0:
+            return 0
         self.pf[self.horizon]["crypto"].append(name)
         print(name + " added to portfolio")
-    return 1
+        return 1
+    return 0
 
 def remove(self, name):
     """
@@ -110,7 +116,7 @@ def construct_pf(self):
     """
     self.horizondyn = list(self.pf.keys())[-1]
     names = self.pf[self.horizondyn]
-    data_get(self, names, self.horizondyn, self.pfdta)
+    data_get(self, names, self.pfdta)
     return
 
 def data_store(self, name: str, dic: dict):
@@ -141,24 +147,23 @@ def data_add(self, name: str):
     """
     if name in self.data:
         print(name + " already added to data")
-        #data_show(self, name)
-        return
+        return 1
     if name in self.stock:
         try:
             data_store(self, name, api_stock(self, name))
+            return 1
         except:
             print("Wrong API key, check it out!")
-        #data_show(self, name)
-        return
+            return 0
     if name in self.crypto:
         try:
             data_store(self, name, api_crypto(self, name))
+            return 1
         except:
             print("Wrong API key, check it out!")
-        #data_show(self, name)
-        return
+            return 0
     print("Wrong name or name type.")
-    return
+    return 0
 
 def data_show(self, name: str):
     """

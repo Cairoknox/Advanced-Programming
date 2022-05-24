@@ -1,79 +1,28 @@
-# ///////////////////////////////////////////////////////////////
-#
-# BY: WANDERSON M.PIMENTA
-# PROJECT MADE WITH: Qt Designer and PySide6
-# V: 1.0.0
-#
-# This project can be used freely for all uses, as long as they maintain the
-# respective credits only in the Python scripts, any information in the visual
-# interface (GUI) can be modified without any implication.
-#
-# There are limitations on Qt licenses if you want to use your products
-# commercially, I recommend reading them on the official website:
-# https://doc.qt.io/qtforpython/licenses.html
-#
-# ///////////////////////////////////////////////////////////////
-
-# IMPORT PACKAGES AND MODULES
-# ///////////////////////////////////////////////////////////////
 from gui.core.functions import Functions
-
-# IMPORT QT CORE
-# ///////////////////////////////////////////////////////////////
 from qt_core import *
-
-# IMPORT SETTINGS
-# ///////////////////////////////////////////////////////////////
 from gui.core.json_settings import Settings
-
-# IMPORT THEME COLORS
-# ///////////////////////////////////////////////////////////////
 from gui.core.json_themes import Themes
-
-# IMPORT PY ONE DARK WIDGETS
-# ///////////////////////////////////////////////////////////////
 from gui.widgets import *
-
-# IMPORT SETUP MAIN WINDOW
-# ///////////////////////////////////////////////////////////////
 from . setup_main_window import *
-
-# IMPORT MAIN WINDOW PAGES / AND SIDE BOXES FOR APP
-# ///////////////////////////////////////////////////////////////
 from gui.uis.pages.ui_main_pages import Ui_MainPages
-
-# RIGHT COLUMN
-# ///////////////////////////////////////////////////////////////
 from gui.uis.columns.ui_right_column import Ui_RightColumn
-
-# CREDITS
-# ///////////////////////////////////////////////////////////////
 from gui.widgets.py_credits_bar.py_credits import PyCredits
 
-# PY WINDOW
-# ///////////////////////////////////////////////////////////////
+#Main Window
 class UI_MainWindow(object):
     def setup_ui(self, parent):
         if not parent.objectName():
             parent.setObjectName("MainWindow")
 
-        # LOAD SETTINGS
-        # ///////////////////////////////////////////////////////////////
         settings = Settings()
         self.settings = settings.items
-
-        # LOAD THEME COLOR
-        # ///////////////////////////////////////////////////////////////
         themes = Themes()
         self.themes = themes.items
 
-        # SET INITIAL PARAMETERS
         parent.resize(self.settings["startup_size"][0], self.settings["startup_size"][1])
         parent.setMinimumSize(self.settings["minimum_size"][0], self.settings["minimum_size"][1])
 
-        # SET CENTRAL WIDGET
-        # Add central widget to app
-        # ///////////////////////////////////////////////////////////////
+        #Set pages
         self.central_widget = QWidget()
         self.central_widget.setStyleSheet(f'''
             font: {self.settings["font"]["text_size"]}pt "{self.settings["font"]["family"]}";
@@ -85,9 +34,7 @@ class UI_MainWindow(object):
         else:
             self.central_widget_layout.setContentsMargins(0,0,0,0)
         
-        # LOAD PY WINDOW CUSTOM WIDGET
-        # Add inside PyWindow "layout" all Widgets
-        # ///////////////////////////////////////////////////////////////
+        #Custom widgets by Wanderson
         self.window = PyWindow(
             parent,
             bg_color = self.themes["app_color"]["bg_one"],
@@ -95,9 +42,9 @@ class UI_MainWindow(object):
             text_color = self.themes["app_color"]["text_foreground"]
         )
         
-        # If disable custom title bar
-        if not self.settings["custom_title_bar"]:
-            self.window.set_stylesheet(border_radius = 0, border_size = 0)
+        # # If disable custom title bar
+        # if not self.settings["custom_title_bar"]:
+        #     self.window.set_stylesheet(border_radius = 0, border_size = 0)
         
         # ADD PY WINDOW TO CENTRAL WIDGET
         self.central_widget_layout.addWidget(self.window)

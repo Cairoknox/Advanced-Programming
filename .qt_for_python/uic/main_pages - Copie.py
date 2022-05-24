@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main_pages.ui'
+## Form generated from reading UI file 'main_pages - Copie.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.3.0
 ##
@@ -72,6 +72,7 @@ class Ui_MainPages(object):
         font2 = QFont()
         font2.setFamilies([u"MS Shell Dlg 2"])
         font2.setPointSize(16)
+        font2.setBold(False)
         self.welcome_message.setFont(font2)
         self.welcome_message.setStyleSheet(u"font-size: 16pt")
         self.welcome_message.setAlignment(Qt.AlignCenter)
@@ -118,7 +119,11 @@ class Ui_MainPages(object):
         self.welcome_message_2 = QLabel(self.frame)
         self.welcome_message_2.setObjectName(u"welcome_message_2")
         self.welcome_message_2.setEnabled(True)
-        self.welcome_message_2.setFont(font1)
+        font3 = QFont()
+        font3.setFamilies([u"MS Shell Dlg 2"])
+        font3.setPointSize(14)
+        font3.setBold(False)
+        self.welcome_message_2.setFont(font3)
         self.welcome_message_2.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.welcome_message_2)
@@ -175,6 +180,9 @@ class Ui_MainPages(object):
         self.page_2_layout.addWidget(self.main_frame_2)
 
         self.pages.addWidget(self.page_2)
+        self.page = QWidget()
+        self.page.setObjectName(u"page")
+        self.pages.addWidget(self.page)
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
         self.page_3.setStyleSheet(u"")
@@ -190,7 +198,7 @@ class Ui_MainPages(object):
         self.verticalLayout_2 = QVBoxLayout(self.main_frame_3)
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(10, 10, 10, 0)
+        self.verticalLayout_2.setContentsMargins(20, 20, 20, 0)
         self.markowitz_frame = QFrame(self.main_frame_3)
         self.markowitz_frame.setObjectName(u"markowitz_frame")
         self.markowitz_frame.setFrameShape(QFrame.NoFrame)
@@ -224,7 +232,7 @@ class Ui_MainPages(object):
 
         self.retranslateUi(MainPages)
 
-        self.pages.setCurrentIndex(2)
+        self.pages.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainPages)

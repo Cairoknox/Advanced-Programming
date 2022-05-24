@@ -6,6 +6,7 @@ from gui.core.json_themes import Themes
 from gui.widgets import *
 from . ui_main import *
 from . functions_main_window import *
+import pyqtgraph as pg
 
 #Back-end
 from portfolio import *
@@ -22,10 +23,6 @@ class SetupMainWindow:
         {"btn_icon" : "icon_file.svg", "btn_id" : "btn_market", "btn_text" : "Market data", "btn_tooltip" : "Market data", "show_top" : True, "is_active" : False},
         {"btn_icon" : "icon_file.svg", "btn_id" : "btn_portfolio", "btn_text" : "Portfolio", "btn_tooltip" : "Portfolio", "show_top" : True, "is_active" : False},
         {"btn_icon" : "icon_info.svg", "btn_id" : "btn_about", "btn_text" : "About", "btn_tooltip" : "About", "show_top" : False, "is_active" : False}
-    ]
-    #Title bar menu buttons
-    add_title_bar_menus = [
-        {"btn_icon" : "icon_settings.svg", "btn_id" : "btn_top_settings", "btn_tooltip" : "Top settings", "is_active" : False}
     ]
     
     #This gets called on button click, returns the action that the button is designed for
@@ -58,8 +55,6 @@ class SetupMainWindow:
         self.ui.left_menu.add_menus(SetupMainWindow.add_left_menus)
         #Trigger an event when left menu button is clicked
         self.ui.left_menu.clicked.connect(self.btn_clicked)
-        #Add title bar menu
-        self.ui.title_bar.add_menus(SetupMainWindow.add_title_bar_menus)
         #Trigger an event when title bar menu button is clicked
         self.ui.title_bar.clicked.connect(self.btn_clicked)
         #Add the custom title bar to the GUI
@@ -87,23 +82,24 @@ class SetupMainWindow:
         self.send_API = PyPushButton(text="send", radius=8,
         color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
         bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
-        self.text = QLabel("connected")
+        #self.text = QLabel("connected")
         #Save the API key entered by user
         def print_API():
             API_key = self.line_API.text()
             if not API_key == "":
                 self.key = API_key
                 print("API key loaded.")
+                self.ui.load_pages.welcome_message_2.setText("You are now connected!")
             else:
-                self.text.text("error")
+                #self.text.text("error")
                 print("API key cannot be empty")
-            #self.ui.load_pages.API_valid_layout.addWidget(self.text)
-            self.ui.load_pages.send_layout.addWidget(self.text)
+                self.ui.load_pages.welcome_message_2.setText("Error. Enter your AlphaVantage API key...")
+            #self.ui.load_pages.API_key_layout.addWidget(self.text)
         #Use the function on button click
         self.send_API.clicked.connect(print_API)
         #Display both the text field and the send button
         self.ui.load_pages.API_key_layout.addWidget(self.line_API)
-        self.ui.load_pages.send_layout.addWidget(self.send_API)
+        self.ui.load_pages.API_key_layout.addWidget(self.send_API)
 
         #mainpage2: Choose any ticker
         self.line_ticker = QLineEdit()
@@ -139,7 +135,7 @@ class SetupMainWindow:
             context_color = self.themes["app_color"]["context_color"]
         )
         #Size and column names
-        self.table_widget.setColumnCount(3)
+        self.table_widget.setColumnCount(4)
         self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table_widget.setSelectionMode(QAbstractItemView.SingleSelection)
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -152,9 +148,13 @@ class SetupMainWindow:
         self.column_3 = QTableWidgetItem()
         self.column_3.setTextAlignment(Qt.AlignCenter)
         self.column_3.setText("Last close (USD)")
+        self.column_4 = QTableWidgetItem()
+        self.column_4.setTextAlignment(Qt.AlignCenter)
+        self.column_4.setText("Optimal weight")
         self.table_widget.setHorizontalHeaderItem(0, self.column_1)
         self.table_widget.setHorizontalHeaderItem(1, self.column_2)
         self.table_widget.setHorizontalHeaderItem(2, self.column_3)
+        self.table_widget.setHorizontalHeaderItem(3, self.column_4)
         #Add a row
         def update_table(ticker, action):
             if action == 'add':
@@ -164,7 +164,6 @@ class SetupMainWindow:
                 self.table_widget.setItem(nrow, 1, QTableWidgetItem(ticker))
                 self.closing = QTableWidgetItem()
                 self.closing.setTextAlignment(Qt.AlignRight)
-                
                 if ticker in self.crypto:
                     self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.crypto[ticker]))
                     self.closing.setText(str(round(float(self.data[ticker][self.today]["4a. close (USD)"]),4)))
@@ -204,22 +203,35 @@ class SetupMainWindow:
         bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
 
         self.text_construct = QLabel("constructed")
-        #self.figure = plt.figure(figsize = (12, 8))
-        #self.canvas = FigureCanvas(self.figure)
+
+        self.plot = pg.PlotWidget()
+        scatter = pg.ScatterPlotItem()
+        scatter.setSize(10)
+        scatter.setBrush(255, 255, 255, 120)
+        scatteropt = pg.ScatterPlotItem()
+        scatteropt.setSize(14)
+        scatteropt.setBrush(221, 44, 0, 240)
 
         #Run data_get on button push
         def construct():
             construct_pf(self)
-            self.ui.load_pages.portfolio_layout.addWidget(self.text_construct)
+            self.ui.load_pages.constroptimize_layout.addWidget(self.text_construct)
         self.construct.clicked.connect(construct)
+        
+        #Optimize and plot
         def optim():
             markowitz(self)
-            markoplot(self, self.vol_arr, self.ret_arr, self.max_sr_vol, self.max_sr_ret, self.sharpe_arr)
+            scatter.addPoints(self.vol_arr.tolist(), self.ret_arr.tolist())
+            scatteropt.addPoints([self.max_sr_vol], [self.max_sr_ret])
+            # self.plot(self.frontier_x, self.frontier_y)
+            self.plot.addItem(scatter)
+            self.plot.addItem(scatteropt)
+            # for gradient-->self.sharpe_arr
         self.optimize.clicked.connect(optim)
 
-        self.ui.load_pages.portfolio_layout.addWidget(self.construct)
-        self.ui.load_pages.portfolio_layout.addWidget(self.optimize)
-        #self.ui.load_pages.markowitz_layout.addWidget(self.canvas)
+        self.ui.load_pages.constroptimize_layout.addWidget(self.construct)
+        self.ui.load_pages.constroptimize_layout.addWidget(self.optimize)
+        self.ui.load_pages.markowitz_layout.addWidget(self.plot)
 
     #Resize the grips when window is resized
     def resize_grips(self):
