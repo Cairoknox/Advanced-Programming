@@ -1,7 +1,5 @@
 #Directly modified from Wanderson M. Pimenta original GUI code
-import sys
 from qt_core import *
-
 from . ui_main import *
 
 # UI Functions

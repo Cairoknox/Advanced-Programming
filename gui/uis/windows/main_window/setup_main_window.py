@@ -11,6 +11,7 @@ import pyqtgraph as pg
 #Back-end
 from portfolio import *
 from markowitz import *
+from markowitz2 import *
 
 #What should the main window contain
 class SetupMainWindow:
@@ -220,9 +221,11 @@ class SetupMainWindow:
         
         #Optimize and plot
         def optim():
-            markowitz(self)
-            scatter.addPoints(self.vol_arr.tolist(), self.ret_arr.tolist())
-            scatteropt.addPoints([self.max_sr_vol], [self.max_sr_ret])
+            # markowitz(self)
+            # scatter.addPoints(self.vol_arr.tolist(), self.ret_arr.tolist())
+            # scatteropt.addPoints([self.max_sr_vol], [self.max_sr_ret])
+            markowitz_init(self)
+            scatter.addPoints(self.volatility.tolist(), self.returns.tolist())
             # self.plot(self.frontier_x, self.frontier_y)
             self.plot.addItem(scatter)
             self.plot.addItem(scatteropt)

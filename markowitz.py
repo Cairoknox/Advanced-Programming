@@ -1,7 +1,9 @@
 import numpy as np
 from scipy.optimize import minimize
+import time
 
 def markowitz(self):
+    start = time.time()
     np.random.seed(42)
     num_ports = 6000
     num_asset = len(self.pfdta.columns)
@@ -20,7 +22,8 @@ def markowitz(self):
         self.vol_arr[x] = np.sqrt(np.dot(weights.T, np.dot(self.pfdta.cov()*252, weights)))
 
         self.sharpe_arr[x] = self.ret_arr[x]/self.vol_arr[x]
-
+    end = time.time()
+    print(end-start)
     self.max_sr_ret = self.ret_arr[self.sharpe_arr.argmax()]
     self.max_sr_vol = self.vol_arr[self.sharpe_arr.argmax()]
     
