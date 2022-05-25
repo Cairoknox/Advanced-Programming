@@ -3,12 +3,12 @@
     #12. Link free up space button to the get_data.remove() function
 
 #AV : S5D9F26JVZ9GHH29
+#ESG : 5c92ad213380a777c20a6c7f523ca436
 
 import os
 import json
 import requests
 from datetime import datetime
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
@@ -33,8 +33,6 @@ data_store(name, dic)
     Stores new data from API call in a dictionnary.
 data_add(name)
     Tries to call new data iif it is not already in storage.
-data_show(name)
-    Plot data that has been asked or added to the portfolio or data.
 data_get(names, data = pd.DataFrame())
     Construct a portfolio for given stock and cryptos.
 api_stock(name)
@@ -62,9 +60,16 @@ def boot(self):
                 json.dump(self.data, f)
             os.remove("data.json")
             self.data = dict()
-            raise Exception("I made a backup of your data, it is outdated.")
+            raise Exception("I made a backup of your data, it was outdated")
     except:
-        print("I tried to open data.json but doesn't exist.")
+        print("I tried to open data.json but doesn't exist")
+        pass
+    try:
+        with open("esg.json") as f:
+            self.esg = json.load(f)
+            print("ESG data loaded")
+    except:
+        print("I tried to open esg.json but it doesn't exist")
         pass
 
 def add(self, name):
@@ -119,6 +124,37 @@ def construct_pf(self):
     data_get(self, names, self.pfdta)
     return
 
+def esg_store(self, name, dic):
+    """
+    Stores new esg data from API call in a dictionnary.
+    """
+    self.esg[name] = dic
+    print(name + " added to esg data successfuly!")
+    #autosave
+    with open("esg.json", "w+") as f:
+        json.dump(self.esg, f)
+        print("Autosave esg...")
+    return
+
+def esg_add(self, name: str):
+    """
+    Tries to call new data iif it is not already in storage.
+    ----------
+    Parameters
+    name : str
+        The index (ETF) or stock.
+    """
+    if name in self.esg:
+        print(name + " already added to esg data")
+        return
+    if name in self.stock:
+        try:
+            esg_store(self, name, api_esg(self, name))
+            return
+        except:
+            print("Wrong esg API key, check it out!")
+    return
+
 def data_store(self, name: str, dic: dict):
     """
     Stores new data from API call in a dictionnary.
@@ -164,21 +200,6 @@ def data_add(self, name: str):
             return 0
     print("Wrong name or name type.")
     return 0
-
-def data_show(self, name: str):
-    """
-    data_show(name)
-        Plot data that has been asked or added to the portfolio or data.
-    ----------
-    Parameters
-    name : str
-        The index (ETF), crypto, or stock.
-    """
-    temp = self.data[name]
-    x, y = zip(*temp)
-    plt.plot(x, y)
-    plt.plot.show()
-    return
 
 def data_get(self, names: dict, data: pd.DataFrame = pd.DataFrame()):
     """
@@ -264,3 +285,21 @@ def api_crypto(self, name: str):
     """
     url = 'https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol='+ name + '&market=USD&apikey=' + self.key
     return requests.get(url).json()["Time Series (Digital Currency Daily)"]
+
+def api_esg(self, name: str):
+    """
+    Used for ESG data. Returns a dictionnary of ESG data.
+    ----------
+    Parameters
+    name : str
+        The stock or index.
+    """
+    url = 'https://tf689y3hbj.execute-api.us-east-1.amazonaws.com/prod/authorization/search?q=' + name + '&token=' + self.keyesg
+    req = requests.get(url).json()
+    if req != list():
+        req = req[0]
+        print(req)
+        return {key:req.get(key) for key in ['total_grade', 'total', 'last_processing_date']}
+    url = 'https://tf689y3hbj.execute-api.us-east-1.amazonaws.com/prod/authorization/search?q=' + self.stock[name] + '&token=' + self.keyesg
+    req = requests.get(url).json()[0]
+    return {key:req.get(key) for key in ['total_grade', 'total', 'last_processing_date']}

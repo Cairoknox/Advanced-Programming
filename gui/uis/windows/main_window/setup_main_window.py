@@ -112,6 +112,7 @@ class SetupMainWindow:
             ticker = self.line_ticker.text()
             if ticker in self.stock or ticker in self.crypto:
                 success = add(self, ticker)
+                esg_add(self, ticker)
                 if success:
                     update_table(ticker, 'add')
             else:
@@ -136,7 +137,7 @@ class SetupMainWindow:
             context_color = self.themes["app_color"]["context_color"]
         )
         #Size and column names
-        self.table_widget.setColumnCount(4)
+        self.table_widget.setColumnCount(5)
         self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table_widget.setSelectionMode(QAbstractItemView.SingleSelection)
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -151,11 +152,15 @@ class SetupMainWindow:
         self.column_3.setText("Last close (USD)")
         self.column_4 = QTableWidgetItem()
         self.column_4.setTextAlignment(Qt.AlignCenter)
-        self.column_4.setText("Optimal weight")
+        self.column_4.setText("ESG grade (score)")
+        self.column_5 = QTableWidgetItem()
+        self.column_5.setTextAlignment(Qt.AlignCenter)
+        self.column_5.setText("Optimal weight")
         self.table_widget.setHorizontalHeaderItem(0, self.column_1)
         self.table_widget.setHorizontalHeaderItem(1, self.column_2)
         self.table_widget.setHorizontalHeaderItem(2, self.column_3)
         self.table_widget.setHorizontalHeaderItem(3, self.column_4)
+        self.table_widget.setHorizontalHeaderItem(4, self.column_5)
         #Add a row
         def update_table(ticker, action):
             if action == 'add':
@@ -165,13 +170,17 @@ class SetupMainWindow:
                 self.table_widget.setItem(nrow, 1, QTableWidgetItem(ticker))
                 self.closing = QTableWidgetItem()
                 self.closing.setTextAlignment(Qt.AlignRight)
+                self.esgtable = QTableWidgetItem()
+                self.esgtable.setTextAlignment(Qt.AlignCenter)
                 if ticker in self.crypto:
                     self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.crypto[ticker]))
                     self.closing.setText(str(round(float(self.data[ticker][self.today]["4a. close (USD)"]),4)))
                 elif ticker in self.stock:
                     self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.stock[ticker]))
                     self.closing.setText(str(round(float(self.data[ticker][self.today]["4. close"]),4)))
+                    self.esgtable.setText(self.esg[ticker]['total_grade'] + ' (' + str(self.esg[ticker]['total']) + ')',)
                 self.table_widget.setItem(nrow, 2, self.closing)
+                self.table_widget.setItem(nrow, 3, self.esgtable)
                 return
             elif action == 'remove':
                 try:
