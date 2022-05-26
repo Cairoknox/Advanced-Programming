@@ -1,49 +1,64 @@
+from numba import jit, prange
 import numpy as np
 from scipy.optimize import minimize
-import time
 
-def markowitz(self):
-    start = time.time()
-    np.random.seed(42)
-    num_ports = 6000
-    num_asset = len(self.pfdta.columns)
-    all_weights = np.zeros((num_ports, num_asset))
-    self.ret_arr = np.zeros(num_ports)
-    self.vol_arr = np.zeros(num_ports)
-    self.sharpe_arr = np.zeros(num_ports)
-    
+def markowitz_init(self):
+    #jit does not like pandas dataframes
+    assets = len(self.pfdta.columns)
+    mean = np.array(self.pfdta.mean())
+    covariance = np.array(self.pfdta.cov())
+    self.returns, self.volatility, self.weight, a, b, self.sharpe_ratios = markowitz_speedwagon(assets, mean, covariance)
+    self.optim = [a, b]
+    self.returns2 = np.linspace(0, self.returns[np.argmax(self.returns)]*(1+assets/100), 100)
+    self.volatility2, self.weight2, a, b = markowitz_turtle(assets, mean, covariance, self.returns2)
+    self.optim2 = [a, b]
 
-    for x in range(num_ports):
-        weights = np.array(np.random.random(num_asset))
-        weights = weights/np.sum(weights)
-        all_weights[x,:] = weights
+@jit(nopython=True)
+def markowitz_speedwagon(assets, mean, covariance):
+    business_days = 260
+    portfolios = int(9000*np.log(assets))
+    returns = np.zeros(portfolios)
+    volatility = np.zeros(portfolios)
+    sharpe_ratios = np.zeros(portfolios)
+    maxsr = 0
+    #Generate random portfolios
+    for i in prange(portfolios):
+        weight = np.random.random(assets)
+        weight = weight/np.sum(weight)
+        returns[i] = np.sum(business_days*mean*weight)
+        volatility[i] = np.sqrt(np.dot(business_days*weight.T, np.dot(covariance, weight)))
+        sharpe_ratios[i] = returns[i]/volatility[i]
+        if sharpe_ratios[i] > maxsr:
+            maxsr = sharpe_ratios[i]
+            maxw = weight
+            maxr = returns[i]
+            maxv = volatility[i]
+    return returns, volatility, maxw, maxv, maxr, sharpe_ratios
 
-        self.ret_arr[x] = np.sum(self.pfdta.mean()*weights*252)
-        self.vol_arr[x] = np.sqrt(np.dot(weights.T, np.dot(self.pfdta.cov()*252, weights)))
-
-        self.sharpe_arr[x] = self.ret_arr[x]/self.vol_arr[x]
-    end = time.time()
-    print(end-start)
-    self.max_sr_ret = self.ret_arr[self.sharpe_arr.argmax()]
-    self.max_sr_vol = self.vol_arr[self.sharpe_arr.argmax()]
-    
-#     constraints = ({'type': 'eq', 'fun':check_sum})
-#     bounds = ((0, 1), (0, 1), (0, 1), (0, 1))
-#     init_guess = [0.25, 0.25, 0.25, 0.25]
-
-#     opt_results = minimize(neg_sharpe, init_guess, method = 'SLSQP', bounds = bounds, constraints = constraints, args=(self))
-#     print(opt_results)
-
-#     get_ret_vol_sr(opt_results.x, self)
-#     self.frontier_y = np.linspace(0, 0.3, 200)
-
-#     self.frontier_x = []
-
-#     for possible_return in self.frontier_y:
-#        constraints = ({'type':'eq', 'fun':check_sum}, {'type':'eq', 'fun': lambda w: get_ret_vol_sr(w, self)[0] - possible_return})
-       
-#        result = minimize(minimize_volatility,init_guess,method='SLSQP', bounds=bounds, constraints=constraints, args=(self))
-#        self.frontier_x.append(result['fun'])
+def markowitz_turtle(assets, mean, covariance, mus):
+    def markowitz_objective(weights):
+        return np.dot(business_days*weights.T, np.dot(covariance, weights))
+    def constraint1(weights):
+        return np.sum(weights)-1
+    def constraint2(weights):
+        return np.sum(business_days*mean*weights)
+    def sharpe_objective(weights):
+        return np.sum(business_days*mean*weights)/np.dot(business_days*weights.T, np.dot(covariance, weights))
+    business_days = 260
+    bounds = []
+    for i in range(assets):
+        bounds.append((0, 1))
+    bounds = tuple(bounds)
+    volatility = []
+    for i in mus:
+        weights = np.random.random(assets)
+        constraints = ({'type' : 'eq', 'fun' : lambda weights : constraint1(weights)},
+        {'type' : 'eq', 'fun' : lambda weights : constraint2(weights) - i})
+        volatility.append(np.sqrt(minimize(markowitz_objective, weights, method = 'SLSQP', constraints = constraints, bounds = bounds)['fun']))
+    maxw = minimize(sharpe_objective, weights, method = 'SLSQP', bounds = bounds, constraints = constraints).x
+    maxr = constraint2(maxw)
+    maxv = np.sqrt(markowitz_objective(maxw))
+    return volatility, maxw, maxv, maxr
 
 
 # def get_ret_vol_sr(weights, self):
@@ -55,9 +70,3 @@ def markowitz(self):
 
 # def neg_sharpe(weights, self):
 #     return get_ret_vol_sr(weights, self)[2]*(-1)
-
-# def check_sum(weights):
-#     return np.sum(weights)-1
-
-# def minimize_volatility(self, weights):
-#     return get_ret_vol_sr(weights, self)[1]

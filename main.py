@@ -21,15 +21,14 @@ class MainWindow(QMainWindow):
     def __init__(self):
         #Back-end
         self.key = "demo"
-        self.keyesg = "API Code"
-        self.horizon = '2019-05-01'
-        self.horizondyn = '2019-05-01'
+        self.keyesg = "5c92ad213380a777c20a6c7f523ca436"
+        self.horizon = '2020-03-02'
+        self.horizondyn = '2020-03-02'
         self.stock = dict()
         self.crypto = dict()
         self.data = dict()
         self.esg = dict()
         self.today = requests.get("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo").json()["Meta Data"]["3. Last Refreshed"][0:10]
-        print(self.today)
         self.pfdta = pd.DataFrame()
         self.pf = dict()
         boot(self)

@@ -11,7 +11,6 @@ import pyqtgraph as pg
 #Back-end
 from portfolio import *
 from markowitz import *
-from markowitz2 import *
 
 #What should the main window contain
 class SetupMainWindow:
@@ -95,8 +94,8 @@ class SetupMainWindow:
                 #self.text.text("error")
                 print("API key cannot be empty")
                 self.ui.load_pages.welcome_message_2.setText("Error. Enter your AlphaVantage API key...")
-            #self.ui.load_pages.API_key_layout.addWidget(self.text)
         #Use the function on button click
+        self.line_API.returnPressed.connect(print_API)
         self.send_API.clicked.connect(print_API)
         #Display both the text field and the send button
         self.ui.load_pages.API_key_layout.addWidget(self.line_API)
@@ -115,9 +114,12 @@ class SetupMainWindow:
                 esg_add(self, ticker)
                 if success:
                     update_table(ticker, 'add')
+                self.line_ticker.clear()
             else:
                 print("Wrong ticker")
+                self.line_ticker.clear()
             return
+        self.line_ticker.returnPressed.connect(add_ticker)
         self.add_ticker.clicked.connect(add_ticker)
 
         self.ui.load_pages.ask_layout.addWidget(self.line_ticker)
@@ -162,7 +164,7 @@ class SetupMainWindow:
         self.table_widget.setHorizontalHeaderItem(3, self.column_4)
         self.table_widget.setHorizontalHeaderItem(4, self.column_5)
         #Add a row
-        def update_table(ticker, action):
+        def update_table(ticker, action, place = None):
             if action == 'add':
                 nrow = self.table_widget.rowCount()
                 self.table_widget.insertRow(nrow)
@@ -192,6 +194,12 @@ class SetupMainWindow:
                 except:
                     print('Nothing to remove')
                 return
+            elif action == 'optw':
+                self.optw = QTableWidgetItem()
+                self.optw.setTextAlignment(Qt.AlignCenter)
+                self.optw.setText(str(round(self.weight2[place], 3)))
+                self.table_widget.setItem(place, 4, self.optw)
+
         self.ui.load_pages.plot_layout.addWidget(self.table_widget)
         #Remove a row
         self.delete = PyPushButton(text="delete", radius=8,
@@ -200,6 +208,8 @@ class SetupMainWindow:
         def remove_ticker():
             update_table(None, 'remove')
             return
+        self.shortcut = QShortcut(QKeySequence("del"), self)
+        self.shortcut.activated.connect(remove_ticker)
         self.delete.clicked.connect(remove_ticker)
         self.ui.load_pages.ask_layout.addWidget(self.delete)
 
@@ -215,13 +225,12 @@ class SetupMainWindow:
         self.text_construct = QLabel("constructed")
 
         self.plot = pg.PlotWidget()
-        scatter = pg.ScatterPlotItem()
-        scatter.setSize(10)
-        scatter.setBrush(255, 255, 255, 120)
-        scatteropt = pg.ScatterPlotItem()
+        scatter = pg.ScatterPlotItem(hoverable = True)
+        scatter.setSize(6)
+        scatteropt = pg.ScatterPlotItem(hoverable = True)
         scatteropt.setSize(14)
         scatteropt.setBrush(221, 44, 0, 240)
-
+        plot = pg.PlotCurveItem()
         #Run data_get on button push
         def construct():
             construct_pf(self)
@@ -230,15 +239,28 @@ class SetupMainWindow:
         
         #Optimize and plot
         def optim():
-            # markowitz(self)
-            # scatter.addPoints(self.vol_arr.tolist(), self.ret_arr.tolist())
-            # scatteropt.addPoints([self.max_sr_vol], [self.max_sr_ret])
             markowitz_init(self)
-            scatter.addPoints(self.volatility.tolist(), self.returns.tolist())
-            # self.plot(self.frontier_x, self.frontier_y)
+            scatteropt.clear()
+            scatter.clear()
+            plot.clear()
+            scatteropt.addPoints([self.optim2[0]], [self.optim2[1]])
+            scat_df = pd.DataFrame()
+            for i in ['volatility', 'returns', 'sharpe_ratios']:
+                scat_df[i] = eval('self.' + i + '.tolist()')
+            scat_df = scat_df.sort_values(by = 'sharpe_ratios')
+            print(scat_df)
+            brush = ['#fdcf52', '#f5b95c', '#e3a646', '#f7a96a', '#d56b28', '#ee6432', '#c85b2d', '#b82b1f', '#a83c32', '#7f2c20']
+            rep = np.append(np.repeat(len(scat_df)//len(brush), 9), np.array(len(scat_df)//len(brush) + len(scat_df)%len(brush)))
+            for i in range(len(rep)):
+                scatter.addPoints(list(scat_df['volatility'][i*rep[0]:(i*rep[0]+rep[i])]), list(scat_df['returns'][i*rep[0]:(i*rep[0]+rep[i])]), brush = brush[i], pen = brush[i])
+            plot.setData(self.volatility2, self.returns2, pen = pg.mkPen('r', width=4))
             self.plot.addItem(scatter)
             self.plot.addItem(scatteropt)
-            # for gradient-->self.sharpe_arr
+            self.plot.addItem(plot)
+            a = 0
+            for i in self.pf[self.horizondyn]["stock"] + self.pf[self.horizondyn]["crypto"]:
+                update_table(i, 'optw', a)
+                a += 1
         self.optimize.clicked.connect(optim)
 
         self.ui.load_pages.constroptimize_layout.addWidget(self.construct)

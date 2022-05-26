@@ -1,7 +1,3 @@
-
-    #10. Link remove from portfolio button to the portfolio.remove() function
-    #12. Link free up space button to the get_data.remove() function
-
 #AV : S5D9F26JVZ9GHH29
 #ESG : 5c92ad213380a777c20a6c7f523ca436
 
@@ -153,6 +149,7 @@ def esg_add(self, name: str):
             return
         except:
             print("Wrong esg API key, check it out!")
+            pass
     return
 
 def data_store(self, name: str, dic: dict):
@@ -226,7 +223,6 @@ def data_get(self, names: dict, data: pd.DataFrame = pd.DataFrame()):
     #Check the cached data
     if not data.empty:
         #Take the names, and the horizon of cached data
-        datanames = list(data.columns)
         datahorizon = data.index[-1]
         #If longer horizon, remove what's beyond
         if datetime.strptime(datahorizon, '%Y-%m-%d') < datetime.strptime(self.horizondyn, '%Y-%m-%d'):
