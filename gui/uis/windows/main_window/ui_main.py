@@ -1,3 +1,5 @@
+#Copyright (c) 2021 Wanderson M. Pimenta
+#Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so.
 from gui.core.functions import Functions
 from qt_core import *
 from gui.core.json_settings import Settings
@@ -8,20 +10,16 @@ from gui.uis.pages.ui_main_pages import Ui_MainPages
 from gui.uis.columns.ui_right_column import Ui_RightColumn
 from gui.widgets.py_credits_bar.py_credits import PyCredits
 
-#Main Window
 class UI_MainWindow(object):
     def setup_ui(self, parent):
         if not parent.objectName():
             parent.setObjectName("MainWindow")
-
         settings = Settings()
         self.settings = settings.items
         themes = Themes()
         self.themes = themes.items
-
         parent.resize(self.settings["startup_size"][0], self.settings["startup_size"][1])
         parent.setMinimumSize(self.settings["minimum_size"][0], self.settings["minimum_size"][1])
-
         #Set pages
         self.central_widget = QWidget()
         self.central_widget.setStyleSheet(f'''
@@ -33,7 +31,6 @@ class UI_MainWindow(object):
             self.central_widget_layout.setContentsMargins(10,10,10,10)
         else:
             self.central_widget_layout.setContentsMargins(0,0,0,0)
-        
         #Custom widgets by Wanderson
         self.window = PyWindow(
             parent,
@@ -41,24 +38,12 @@ class UI_MainWindow(object):
             border_color = self.themes["app_color"]["bg_two"],
             text_color = self.themes["app_color"]["text_foreground"]
         )
-        
-        # # If disable custom title bar
-        # if not self.settings["custom_title_bar"]:
-        #     self.window.set_stylesheet(border_radius = 0, border_size = 0)
-        
-        # ADD PY WINDOW TO CENTRAL WIDGET
         self.central_widget_layout.addWidget(self.window)
-
-        # ADD FRAME LEFT MENU
-        # Add here the custom left menu bar
-        # ///////////////////////////////////////////////////////////////
         left_menu_margin = self.settings["left_menu_content_margins"]
         left_menu_minimum = self.settings["lef_menu_size"]["minimum"]
         self.left_menu_frame = QFrame()
         self.left_menu_frame.setMaximumSize(left_menu_minimum + (left_menu_margin * 2), 17280)
         self.left_menu_frame.setMinimumSize(left_menu_minimum + (left_menu_margin * 2), 0)
-
-        # LEFT MENU LAYOUT
         self.left_menu_layout = QHBoxLayout(self.left_menu_frame)
         self.left_menu_layout.setContentsMargins(
             left_menu_margin,
@@ -66,10 +51,6 @@ class UI_MainWindow(object):
             left_menu_margin,
             left_menu_margin
         )
-
-        # ADD LEFT MENU
-        # Add custom left menu here
-        # ///////////////////////////////////////////////////////////////
         self.left_menu = PyLeftMenu(
             parent = self.left_menu_frame,
             app_parent = self.central_widget, # For tooltip parent
@@ -86,20 +67,12 @@ class UI_MainWindow(object):
             text_active = self.themes["app_color"]["text_active"]
         )
         self.left_menu_layout.addWidget(self.left_menu)
-
-        # ADD LEFT COLUMN
-        # Add here the left column with Stacked Widgets
-        # ///////////////////////////////////////////////////////////////
         self.left_column_frame = QFrame()
         self.left_column_frame.setMaximumWidth(self.settings["left_column_size"]["minimum"])
         self.left_column_frame.setMinimumWidth(self.settings["left_column_size"]["minimum"])
         self.left_column_frame.setStyleSheet(f"background: {self.themes['app_color']['bg_two']}")
-
-        # ADD LAYOUT TO LEFT COLUMN
         self.left_column_layout = QVBoxLayout(self.left_column_frame)
         self.left_column_layout.setContentsMargins(0,0,0,0)
-
-        # ADD CUSTOM LEFT MENU WIDGET
         self.left_column = PyLeftColumn(
             parent,
             app_parent = self.central_widget,
@@ -119,26 +92,15 @@ class UI_MainWindow(object):
             icon_close_path = Functions.set_svg_icon("icon_close.svg")
         )
         self.left_column_layout.addWidget(self.left_column)
-
-        # ADD RIGHT WIDGETS
-        # Add here the right widgets
-        # ///////////////////////////////////////////////////////////////
         self.right_app_frame = QFrame()
-
-        # ADD RIGHT APP LAYOUT
         self.right_app_layout = QVBoxLayout(self.right_app_frame)
         self.right_app_layout.setContentsMargins(3,3,3,3)
         self.right_app_layout.setSpacing(6)
-
-        # ADD TITLE BAR FRAME
-        # ///////////////////////////////////////////////////////////////
         self.title_bar_frame = QFrame()
         self.title_bar_frame.setMinimumHeight(40)
         self.title_bar_frame.setMaximumHeight(40)
         self.title_bar_layout = QVBoxLayout(self.title_bar_frame)
         self.title_bar_layout.setContentsMargins(0,0,0,0)
-        
-        # ADD CUSTOM TITLE BAR TO LAYOUT
         self.title_bar = PyTitleBar(
             parent,
             logo_width = 100,
@@ -162,35 +124,19 @@ class UI_MainWindow(object):
             is_custom_title_bar = self.settings["custom_title_bar"]
         )
         self.title_bar_layout.addWidget(self.title_bar)
-
-        # ADD CONTENT AREA
-        # ///////////////////////////////////////////////////////////////
         self.content_area_frame = QFrame()
-
-        # CREATE LAYOUT
         self.content_area_layout = QHBoxLayout(self.content_area_frame)
         self.content_area_layout.setContentsMargins(0,0,0,0)
         self.content_area_layout.setSpacing(0)
-
-        # LEFT CONTENT
         self.content_area_left_frame = QFrame()
-
-        # IMPORT MAIN PAGES TO CONTENT AREA
         self.load_pages = Ui_MainPages()
         self.load_pages.setupUi(self.content_area_left_frame)
-
-        # RIGHT BAR
         self.right_column_frame = QFrame()
         self.right_column_frame.setMinimumWidth(self.settings["right_column_size"]["minimum"])
         self.right_column_frame.setMaximumWidth(self.settings["right_column_size"]["minimum"])
-
-        # IMPORT RIGHT COLUMN
-        # ///////////////////////////////////////////////////////////////
         self.content_area_right_layout = QVBoxLayout(self.right_column_frame)
         self.content_area_right_layout.setContentsMargins(5,5,5,5)
         self.content_area_right_layout.setSpacing(0)
-
-        # RIGHT BG
         self.content_area_right_bg_frame = QFrame()
         self.content_area_right_bg_frame.setObjectName("content_area_right_bg_frame")
         self.content_area_right_bg_frame.setStyleSheet(f'''
@@ -199,29 +145,16 @@ class UI_MainWindow(object):
             background-color: {self.themes["app_color"]["bg_two"]};
         }}
         ''')
-
-        # ADD BG
         self.content_area_right_layout.addWidget(self.content_area_right_bg_frame)
-
-        # ADD RIGHT PAGES TO RIGHT COLUMN
         self.right_column = Ui_RightColumn()
         self.right_column.setupUi(self.content_area_right_bg_frame)
-
-        # ADD TO LAYOUTS
         self.content_area_layout.addWidget(self.content_area_left_frame)
         self.content_area_layout.addWidget(self.right_column_frame)
-
-        # CREDITS / BOTTOM APP FRAME
-        # ///////////////////////////////////////////////////////////////
         self.credits_frame = QFrame()
         self.credits_frame.setMinimumHeight(26)
         self.credits_frame.setMaximumHeight(26)
-
-        # CREATE LAYOUT
         self.credits_layout = QVBoxLayout(self.credits_frame)
         self.credits_layout.setContentsMargins(0,0,0,0)
-
-        # ADD CUSTOM WIDGET CREDITS
         self.credits = PyCredits(
             bg_two = self.themes["app_color"]["bg_two"],
             copyright = self.settings["copyright"],
@@ -230,23 +163,11 @@ class UI_MainWindow(object):
             text_size = self.settings["font"]["text_size"],
             text_description_color = self.themes["app_color"]["text_description"]
         )
-
-        #  ADD TO LAYOUT
         self.credits_layout.addWidget(self.credits)
-
-        # ADD WIDGETS TO RIGHT LAYOUT
-        # ///////////////////////////////////////////////////////////////
         self.right_app_layout.addWidget(self.title_bar_frame)
         self.right_app_layout.addWidget(self.content_area_frame)
         self.right_app_layout.addWidget(self.credits_frame)
-        
-        # ADD WIDGETS TO "PyWindow"
-        # Add here your custom widgets or default widgets
-        # ///////////////////////////////////////////////////////////////
         self.window.layout.addWidget(self.left_menu_frame)
         self.window.layout.addWidget(self.left_column_frame)
         self.window.layout.addWidget(self.right_app_frame)
-
-        # ADD CENTRAL WIDGET AND SET CONTENT MARGINS
-        # ///////////////////////////////////////////////////////////////
         parent.setCentralWidget(self.central_widget)

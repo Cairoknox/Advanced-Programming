@@ -1,3 +1,6 @@
+#Copyright (c) 2021 Wanderson M. Pimenta
+#Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so.
+#Modified by Raphaël Radzuweit
 #Front-end
 from . functions_main_window import *
 from qt_core import *
@@ -16,15 +19,13 @@ from markowitz import *
 class SetupMainWindow:
     def __init__(self):
         super().__init__()
-    
     #Left menu buttons
     add_left_menus = [
         {"btn_icon" : "icon_home.svg", "btn_id" : "btn_home", "btn_text" : "Home", "btn_tooltip" : "Home page", "show_top" : True, "is_active" : True},
-        {"btn_icon" : "icon_file.svg", "btn_id" : "btn_market", "btn_text" : "Market data", "btn_tooltip" : "Market data", "show_top" : True, "is_active" : False},
-        {"btn_icon" : "icon_file.svg", "btn_id" : "btn_portfolio", "btn_text" : "Portfolio", "btn_tooltip" : "Portfolio", "show_top" : True, "is_active" : False},
+        {"btn_icon" : "icon_search.svg", "btn_id" : "btn_market", "btn_text" : "Market data", "btn_tooltip" : "Market data", "show_top" : True, "is_active" : False},
+        {"btn_icon" : "icon_send.svg", "btn_id" : "btn_portfolio", "btn_text" : "Portfolio", "btn_tooltip" : "Portfolio", "show_top" : True, "is_active" : False},
         {"btn_icon" : "icon_info.svg", "btn_id" : "btn_about", "btn_text" : "About", "btn_tooltip" : "About", "show_top" : False, "is_active" : False}
     ]
-    
     #This gets called on button click, returns the action that the button is designed for
     def setup_btns(self):
         if self.ui.title_bar.sender() != None:
@@ -33,7 +34,6 @@ class SetupMainWindow:
             return self.ui.left_menu.sender()
         elif self.ui.left_column.sender() != None:
             return self.ui.left_column.sender()
-    
     #Interaction between front- and back-end
     def setup_gui(self):
         self.setWindowTitle(self.settings["app_name"])
@@ -72,17 +72,15 @@ class SetupMainWindow:
         self.settings = settings.items
         themes = Themes()
         self.themes = themes.items
-        
+        ##MAINPAGE##
         #mainpage: Add logo
         self.logo = QSvgWidget(Functions.set_svg_image("logo_home.svg"))
         self.ui.load_pages.logo_layout.addWidget(self.logo, Qt.AlignCenter, Qt.AlignCenter)
-        
         #mainpage: Add API key manager
         self.line_API = QLineEdit()
         self.send_API = PyPushButton(text="send", radius=8,
         color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
         bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
-        #self.text = QLabel("connected")
         #Save the API key entered by user
         def print_API():
             API_key = self.line_API.text()
@@ -100,7 +98,7 @@ class SetupMainWindow:
         #Display both the text field and the send button
         self.ui.load_pages.API_key_layout.addWidget(self.line_API)
         self.ui.load_pages.API_key_layout.addWidget(self.send_API)
-
+        ##MAINPAGE2##
         #mainpage2: Choose any ticker
         self.line_ticker = QLineEdit()
         self.add_ticker = PyPushButton(text="add", radius=8,
@@ -121,7 +119,6 @@ class SetupMainWindow:
             return
         self.line_ticker.returnPressed.connect(add_ticker)
         self.add_ticker.clicked.connect(add_ticker)
-
         self.ui.load_pages.ask_layout.addWidget(self.line_ticker)
         self.ui.load_pages.ask_layout.addWidget(self.add_ticker)
         #mainpage2: Table
@@ -212,7 +209,7 @@ class SetupMainWindow:
         self.shortcut.activated.connect(remove_ticker)
         self.delete.clicked.connect(remove_ticker)
         self.ui.load_pages.ask_layout.addWidget(self.delete)
-
+        ##MAINPAGE3##
         #mainpage3: Create portfolio
         self.construct = PyPushButton(text="construct", radius=8,
         color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
@@ -221,9 +218,7 @@ class SetupMainWindow:
         self.optimize = PyPushButton(text="optimize", radius=8,
         color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
         bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
-
         self.text_construct = QLabel("constructed")
-
         self.plot = pg.PlotWidget()
         scatter = pg.ScatterPlotItem(hoverable = True)
         scatter.setSize(6)
@@ -236,7 +231,6 @@ class SetupMainWindow:
             construct_pf(self)
             self.ui.load_pages.constroptimize_layout.addWidget(self.text_construct)
         self.construct.clicked.connect(construct)
-        
         #Optimize and plot
         def optim():
             markowitz_init(self)
@@ -266,7 +260,6 @@ class SetupMainWindow:
         self.ui.load_pages.constroptimize_layout.addWidget(self.construct)
         self.ui.load_pages.constroptimize_layout.addWidget(self.optimize)
         self.ui.load_pages.markowitz_layout.addWidget(self.plot)
-
     #Resize the grips when window is resized
     def resize_grips(self):
         if self.settings["custom_title_bar"]:
