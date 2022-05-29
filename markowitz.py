@@ -52,7 +52,7 @@ def markowitz_speedwagon(assets: int, mean: np.ndarray, covariance: np.ndarray):
     returns = np.zeros(portfolios) # Empty vector of zeros
     volatility = np.zeros(portfolios) # Empty vector of zeros
     sharpe_ratios = np.zeros(portfolios) # Empty vector of zeros
-    maxsr = 0 # Initialize the maximum Sharpe ratio
+    maxsr = -100000 # Initialize the maximum Sharpe ratio
     ##Start of the simulation##
     for i in prange(portfolios): #For each portfolio
         weight = np.random.random(assets) #Generate random weight vector

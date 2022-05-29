@@ -73,25 +73,37 @@ class SetupMainWindow:
         themes = Themes()
         self.themes = themes.items
         ##MAINPAGE##
-        #mainpage: Add logo
+        #MAINPAGE: Add logo#
         self.logo = QSvgWidget(Functions.set_svg_image("logo_home.svg"))
         self.ui.load_pages.logo_layout.addWidget(self.logo, Qt.AlignCenter, Qt.AlignCenter)
-        #mainpage: Add API key manager
+        #MAINPAGE: Add API keys manager#
         self.line_API = QLineEdit()
         self.send_API = PyPushButton(text="send", radius=8,
         color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
         bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
         #Save the API key entered by user
-        def print_API():
-            API_key = self.line_API.text()
-            if not API_key == "":
-                self.key = API_key
-                print("API key loaded.")
-                self.ui.load_pages.welcome_message_2.setText("You are now connected!")
-            else:
-                #self.text.text("error")
-                print("API key cannot be empty")
-                self.ui.load_pages.welcome_message_2.setText("Error. Enter your AlphaVantage API key...")
+        self.API_manage = 0 #0 = get AV API key
+        def print_API(): #Method to register the API keys
+            API_key = self.line_API.text() #Get the text from the LineEdit
+            if not API_key == "" and self.API_manage == 0: #Is the text field not empty and are we saving the AV API key? If yes...
+                self.key = API_key #Save the AV API key
+                print("AV API key loaded") #Giving a sign of life to the terminal
+                self.line_API.clear() #Clear the LineEdit
+                self.ui.load_pages.welcome_message_2.setText("Enter your ESG Enterprise API key...") #Change the text on the app
+                self.API_manage = 1 #Next key to be saved will be ESGE API key
+            elif not API_key =="" and self.API_manage == 1: #If no... is the text field not empty and are we saving the ESGE API key? If yes...
+                self.keyesg = API_key #Save the ESGE API key
+                print("ESGE API key loaded") #Giving a sign of life to the terminal
+                self.line_API.clear() #Clear the LineEdit
+                self.ui.load_pages.welcome_message_2.setText("You are now connected! You can change Alpha Vantage key...") #Change the text on the app
+                self.API_manage = 0 #Next key to be saved will be AV API key
+            else: #If no... 
+                print("API key cannot be empty") #Giving a sign of life to the terminal
+                if self.API_manage == 0: #Are we saving the AV API key? If yes...
+                    self.ui.load_pages.welcome_message_2.setText("Error. Enter your Alpha Vantage API key...") #Change the text on the app
+                    return
+                self.ui.load_pages.welcome_message_2.setText("Error. Enter your ESG Enterprise API key...") #Change the text on the app
+            return
         #Use the function on button click
         self.line_API.returnPressed.connect(print_API)
         self.send_API.clicked.connect(print_API)
@@ -99,29 +111,29 @@ class SetupMainWindow:
         self.ui.load_pages.API_key_layout.addWidget(self.line_API)
         self.ui.load_pages.API_key_layout.addWidget(self.send_API)
         ##MAINPAGE2##
-        #mainpage2: Choose any ticker
+        #MAINPAGE2: Choose any ticker#
         self.line_ticker = QLineEdit()
         self.add_ticker = PyPushButton(text="add", radius=8,
         color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
         bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
         #Add the ticker to the portfolio
-        def add_ticker():
-            ticker = self.line_ticker.text()
-            if ticker in self.stock or ticker in self.crypto:
-                success = add(self, ticker)
-                esg_add(self, ticker)
-                if success:
-                    update_table(ticker, 'add')
-                self.line_ticker.clear()
-            else:
-                print("Wrong ticker")
-                self.line_ticker.clear()
+        def add_ticker(): #Method to add a ticker to the portfolio
+            ticker = self.line_ticker.text() #Get the text from the LineEdit
+            if ticker in self.stock or ticker in self.crypto: #Is the ticker valid? If yes...
+                success = add(self, ticker) #Request to add the ticker to portfolio
+                esg_add(self, ticker) #Request to get ESG data
+                if success: #Do we have the data and was the ticker correctly added? If yes...
+                    update_table(ticker, 'add') #Update the portfolio table
+                self.line_ticker.clear() #Clear the LineEdit
+            else: #If no...
+                print("Wrong ticker") #Giving a sign of life to the terminal
+                self.line_ticker.clear() #Clear the LineEdit
             return
         self.line_ticker.returnPressed.connect(add_ticker)
         self.add_ticker.clicked.connect(add_ticker)
         self.ui.load_pages.ask_layout.addWidget(self.line_ticker)
         self.ui.load_pages.ask_layout.addWidget(self.add_ticker)
-        #mainpage2: Table
+        #MAINPAGE2: Table#
         self.table_widget = PyTableWidget(
             radius = 8,
             color = self.themes["app_color"]["text_foreground"],
@@ -161,56 +173,56 @@ class SetupMainWindow:
         self.table_widget.setHorizontalHeaderItem(3, self.column_4)
         self.table_widget.setHorizontalHeaderItem(4, self.column_5)
         #Add a row
-        def update_table(ticker, action, place = None):
-            if action == 'add':
-                nrow = self.table_widget.rowCount()
-                self.table_widget.insertRow(nrow)
-                self.table_widget.setRowHeight(nrow, 22)
-                self.table_widget.setItem(nrow, 1, QTableWidgetItem(ticker))
-                self.closing = QTableWidgetItem()
-                self.closing.setTextAlignment(Qt.AlignRight)
-                self.esgtable = QTableWidgetItem()
-                self.esgtable.setTextAlignment(Qt.AlignCenter)
-                if ticker in self.crypto:
-                    self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.crypto[ticker]))
-                    self.closing.setText(str(round(float(self.data[ticker][self.today]["4a. close (USD)"]),4)))
-                elif ticker in self.stock:
-                    self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.stock[ticker]))
-                    self.closing.setText(str(round(float(self.data[ticker][self.today]["4. close"]),4)))
-                    self.esgtable.setText(self.esg[ticker]['total_grade'] + ' (' + str(self.esg[ticker]['total']) + ')',)
-                self.table_widget.setItem(nrow, 2, self.closing)
-                self.table_widget.setItem(nrow, 3, self.esgtable)
+        def update_table(ticker, action, place = None): #Method to modify the table content
+            if action == 'add': #Does the user want to add a row? If yes...
+                nrow = self.table_widget.rowCount() #Count the number of rows
+                self.table_widget.insertRow(nrow) #Insert a row at the end of the table
+                self.table_widget.setRowHeight(nrow, 22) #Set the row's height
+                self.table_widget.setItem(nrow, 1, QTableWidgetItem(ticker)) #In the second column, insert the ticker name
+                self.closing = QTableWidgetItem() #Instantiate the closing quote
+                self.closing.setTextAlignment(Qt.AlignRight) #Align it right
+                self.esgtable = QTableWidgetItem() #Instantiate the ESG value
+                self.esgtable.setTextAlignment(Qt.AlignCenter) #Align it center
+                if ticker in self.crypto: #Is the ticker a crypto? If yes...
+                    self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.crypto[ticker])) #In the first column, insert the name of the crypto
+                    self.closing.setText(str(round(float(self.data[ticker][self.today]["4a. close (USD)"]),4))) #Set the closing quote value
+                elif ticker in self.stock: #If no... is the ticker a stock? If yes...
+                    self.table_widget.setItem(nrow, 0, QTableWidgetItem(self.stock[ticker])) #In the first column, insert the name of the stock
+                    self.closing.setText(str(round(float(self.data[ticker][self.today]["4. close"]),4))) #Set the closing quote value
+                    self.esgtable.setText(self.esg[ticker]['total_grade'] + ' (' + str(self.esg[ticker]['total']) + ')',) #Set the ESG value
+                self.table_widget.setItem(nrow, 2, self.closing) #In the third column, insert the closing quote
+                self.table_widget.setItem(nrow, 3, self.esgtable) #In the fourth column, insert the ESG value
                 return
-            elif action == 'remove':
-                try:
-                    ticker = self.table_widget.item(self.table_widget.currentRow(),1).text()
-                    remove(self, ticker)
-                    print(ticker + ' removed from portfolio')
-                    self.table_widget.removeRow(self.table_widget.currentRow())
-                    self.table_widget.item
-                except:
-                    print('Nothing to remove')
+            elif action == 'remove': #If no... does the user want to remove a row? If yes...
+                try: #Try the following, if there is an impossibility, jumps to the except block
+                    ticker = self.table_widget.item(self.table_widget.currentRow(),1).text() #Get the ticker name from the second column of the selected row
+                    remove(self, ticker) #Remove said ticker from portfolio
+                    print(ticker + ' removed from portfolio')  #Giving a sign of life to the terminal
+                    self.table_widget.removeRow(self.table_widget.currentRow()) #Remove the row from the table
+                except: #If something went wrong in the try block, most likely no row was selected
+                    print('Nothing to remove') #Giving a sign of life to the terminal
                 return
-            elif action == 'optw':
-                self.optw = QTableWidgetItem()
-                self.optw.setTextAlignment(Qt.AlignCenter)
-                self.optw.setText(str(round(self.weight2[place], 3)))
-                self.table_widget.setItem(place, 4, self.optw)
-
+            elif action == 'optw': #If no... is there a request from the optimizer to add the optimal weight? If yes...
+                self.optw = QTableWidgetItem() #Instantiate the optimal weight
+                self.optw.setTextAlignment(Qt.AlignCenter) #Align it center
+                self.optw.setText(str(round(self.weight[place], 3))) #Set the optimal weight value
+                self.table_widget.setItem(place, 4, self.optw) #In the fifth column, insert the optimal weight value
+                return
+            return
         self.ui.load_pages.plot_layout.addWidget(self.table_widget)
         #Remove a row
         self.delete = PyPushButton(text="delete", radius=8,
         color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
         bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
-        def remove_ticker():
-            update_table(None, 'remove')
+        def remove_ticker(): #Method to remove a ticker from portfolio
+            update_table(None, 'remove') #Ask to remove the ticker
             return
         self.shortcut = QShortcut(QKeySequence("del"), self)
         self.shortcut.activated.connect(remove_ticker)
         self.delete.clicked.connect(remove_ticker)
         self.ui.load_pages.ask_layout.addWidget(self.delete)
         ##MAINPAGE3##
-        #mainpage3: Create portfolio
+        #MAINPAGE3: Create portfolio
         self.construct = PyPushButton(text="construct", radius=8,
         color=self.themes["app_color"]["text_foreground"], bg_color=self.themes["app_color"]["dark_one"],
         bg_color_hover=self.themes["app_color"]["dark_three"], bg_color_pressed=self.themes["app_color"]["dark_four"])
@@ -227,34 +239,33 @@ class SetupMainWindow:
         scatteropt.setBrush(221, 44, 0, 240)
         plot = pg.PlotCurveItem()
         #Run data_get on button push
-        def construct():
-            construct_pf(self)
-            self.ui.load_pages.constroptimize_layout.addWidget(self.text_construct)
+        def construct(): #Method to construct the portfolio
+            construct_pf(self) #Ask to construct the portfolio
+            self.ui.load_pages.constroptimize_layout.addWidget(self.text_construct) #Change the text on the app
         self.construct.clicked.connect(construct)
         #Optimize and plot
-        def optim():
-            markowitz_init(self)
-            scatteropt.clear()
-            scatter.clear()
-            plot.clear()
-            scatteropt.addPoints([self.optim2[0]], [self.optim2[1]])
-            scat_df = pd.DataFrame()
-            for i in ['volatility', 'returns', 'sharpe_ratios']:
-                scat_df[i] = eval('self.' + i + '.tolist()')
-            scat_df = scat_df.sort_values(by = 'sharpe_ratios')
-            print(scat_df)
-            brush = ['#fdcf52', '#f5b95c', '#e3a646', '#f7a96a', '#d56b28', '#ee6432', '#c85b2d', '#b82b1f', '#a83c32', '#7f2c20']
-            rep = np.append(np.repeat(len(scat_df)//len(brush), 9), np.array(len(scat_df)//len(brush) + len(scat_df)%len(brush)))
-            for i in range(len(rep)):
-                scatter.addPoints(list(scat_df['volatility'][i*rep[0]:(i*rep[0]+rep[i])]), list(scat_df['returns'][i*rep[0]:(i*rep[0]+rep[i])]), brush = brush[i], pen = brush[i])
-            plot.setData(self.volatility2, self.returns2, pen = pg.mkPen('r', width=4))
-            self.plot.addItem(scatter)
-            self.plot.addItem(scatteropt)
-            self.plot.addItem(plot)
-            a = 0
-            for i in self.pf[self.horizondyn]["stock"] + self.pf[self.horizondyn]["crypto"]:
-                update_table(i, 'optw', a)
-                a += 1
+        def optim(): #Method to optimize and plot the result
+            markowitz_init(self) #Ask to optimize the portfolio
+            scatteropt.clear() #Clear the variable from any previous work
+            scatter.clear() #Clear the variable from any previous work
+            plot.clear() #Clear the variable from any previous work
+            scatteropt.addPoints([self.optim2[0]], [self.optim2[1]]) #Add the efficient portfolio from non-linear optimization. Remove the '2's to get the one from Monte-Carlo
+            scat_df = pd.DataFrame() #Instantiate a DataFrame
+            for i in ['volatility', 'returns', 'sharpe_ratios']: #For each variable of interest
+                scat_df[i] = eval('self.' + i + '.tolist()') #Add a column to the DataFrame
+            scat_df = scat_df.sort_values(by = 'sharpe_ratios') #Sort by Sharpe ratios
+            brush = ['#fdcf52', '#f5b95c', '#e3a646', '#f7a96a', '#d56b28', '#ee6432', '#c85b2d', '#b82b1f', '#a83c32', '#7f2c20'] #Set up the color mapping (yes, by hand ahah)
+            rep = np.append(np.repeat(len(scat_df)//len(brush), 9), np.array(len(scat_df)//len(brush) + len(scat_df)%len(brush))) #For each 10 colors we give an equal amount of points
+            for i in range(len(rep)): #For each 10 colors
+                scatter.addPoints(list(scat_df['volatility'][i*rep[0]:(i*rep[0]+rep[i])]), list(scat_df['returns'][i*rep[0]:(i*rep[0]+rep[i])]), brush = brush[i], pen = brush[i]) #Add the set of points with the corresponding colors
+            plot.setData(self.volatility2, self.returns2, pen = pg.mkPen('r', width=4)) #Plot the efficient frontier from non-linear optimization
+            self.plot.addItem(scatter) #Load on graph
+            self.plot.addItem(scatteropt) #Load on graph
+            self.plot.addItem(plot) #Load on graph
+            a = 0 #Instantiate a temp variable to zero (a bit sketchy I know but it works)
+            for i in self.pf[self.horizondyn]["stock"] + self.pf[self.horizondyn]["crypto"]: #For each ticker in the portfolio
+                update_table(i, 'optw', a) #Add the corresponding weight to the table
+                a += 1 #Next row
         self.optimize.clicked.connect(optim)
 
         self.ui.load_pages.constroptimize_layout.addWidget(self.construct)

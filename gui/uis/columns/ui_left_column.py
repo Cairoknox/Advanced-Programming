@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'left_columnmCqzCM.ui'
+## Form generated from reading UI file 'left_columnHfOkoP.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.2
 ##
@@ -24,16 +24,18 @@ class Ui_LeftColumn(object):
         self.menu_1 = QWidget()
         self.menu_1.setObjectName(u"menu_1")
         self.verticalLayout = QVBoxLayout(self.menu_1)
-        self.verticalLayout.setSpacing(5)
+        self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(5, 5, 5, 5)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.label_1 = QLabel(self.menu_1)
         self.label_1.setObjectName(u"label_1")
         font = QFont()
         font.setPointSize(16)
         self.label_1.setFont(font)
-        self.label_1.setStyleSheet(u"font-size: 16pt")
-        self.label_1.setAlignment(Qt.AlignCenter)
+        self.label_1.setStyleSheet(u"font-size: 12pt")
+        self.label_1.setAlignment(Qt.AlignLeft)
+        self.label_1.setWordWrap(True)
+        self.label_1.setOpenExternalLinks(True)
 
         self.verticalLayout.addWidget(self.label_1)
 
@@ -47,8 +49,8 @@ class Ui_LeftColumn(object):
         self.label_2 = QLabel(self.menu_2)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setFont(font)
-        self.label_2.setStyleSheet(u"font-size: 16pt")
-        self.label_2.setAlignment(Qt.AlignCenter)
+        self.label_2.setStyleSheet(u"font-size: 12pt")
+        self.label_2.setAlignment(Qt.AlignLeft)
 
         self.verticalLayout_2.addWidget(self.label_2)
 
@@ -66,8 +68,7 @@ class Ui_LeftColumn(object):
     # setupUi
 
     def retranslateUi(self, LeftColumn):
+        text = "Welcome to the Radzuptimizer!\n\nIt is, for now, a simple portfolio optimizer that was developed in the context of an advanced programming course at the University of Lausanne.\n\nThe GUI runs on PySide6 and the theme and widgets were developed by Wanderson M. Pimenta. All credits towards his work should be properly set up, I am terribly sorry if there is any mistake on that side.\n\nFor Alpha Vantage (AV), max 5 API requests per minute and 500 requests per day. More info on www.alphavantage.co/documentation.\n\nFor ESG Enterprise (ESGE), max 50 API requests per day. More info on www.esgenterprise.com/docs/api-reference."
         LeftColumn.setWindowTitle(QCoreApplication.translate("LeftColumn", u"Form", None))
-        self.label_1.setText(QCoreApplication.translate("LeftColumn", u"Menu 1 - Left Menu", None))
-        self.label_2.setText(QCoreApplication.translate("LeftColumn", u"Menu 2 - Left Menu", None))
+        self.label_1.setText(QCoreApplication.translate("LeftColumn", text, None))
     # retranslateUi
-

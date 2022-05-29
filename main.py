@@ -23,8 +23,8 @@ class MainWindow(QMainWindow):
         #Back-end
         self.key = "demo"
         self.keyesg = "5c92ad213380a777c20a6c7f523ca436"
-        self.horizon = '2020-03-02'
-        self.horizondyn = '2020-03-02'
+        self.horizon = '2020-03-09'
+        self.horizondyn = '2020-03-09'
         self.stock = dict()
         self.crypto = dict()
         self.data = dict()

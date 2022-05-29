@@ -46,8 +46,8 @@ The following files are the fruit of my own work.
 This work is subject to a MIT License. See the corresponding LICENSE file for more information on what you can do with it.
 
 ## Badges
-[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
 [![forthebadge made-with-python](http://ForTheBadge.com/images/badges/made-with-python.svg)](https://www.python.org/)
+[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
 [![GitHub release](https://img.shields.io/github/release/Naereen/StrapDown.js.svg)](https://github.com/Cairoknox/Advanced-Programming/releases/)
-[![GitHub commits](https://badgen.net/github/commits/Naereen/Strapdown.js)](https://github.com/Cairoknox/Advanced-Programming/commit/)
+[![GitHub commits](https://badgen.net/github/commits/Naereen/Strapdown.js)](https://github.com/Cairoknox/Advanced-Programming/commits/main)
 [![GitHub license](https://badgen.net/github/license/Naereen/Strapdown.js)](https://github.com/Cairoknox/Advanced-Programming/blob/main/LICENSE)

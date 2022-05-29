@@ -257,6 +257,7 @@ def data_get(self, names: dict, data: pd.DataFrame = pd.DataFrame()):
                 a = "4. close" #Get the closing quote
             elif i in self.crypto: #If no... is the ticker a crypto? If yes...
                 a = "4a. close (USD)" #Get the closing quote
+            print(i)
             temp = {j:self.data[i][j][a] for j in daterestr if datetime.strptime(j, '%Y-%m-%d') > datetime.strptime(self.horizondyn, '%Y-%m-%d')} #Use of our daterestr to not include weekends if mix of stock and crypto tickers
             temp = pd.DataFrame.from_dict(temp, columns = [i], orient = "index") #Transform the dictionnary into a DataFrame column
             send = pd.concat([send, temp], axis=1) #Append to the send DataFrame
